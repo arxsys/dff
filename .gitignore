@@ -1,0 +1,35 @@
+#
+# NOTE! Don't add files that are generated in specific
+# subdirectories here. Add them in the ".gitignore" file
+# in that subdirectory instead.
+#
+# Normal rules
+#
+.*
+*.o
+*.o.*
+*.so
+*.a
+*.s
+*.ko
+*.mod
+*.svn
+*~
+\#*#
+*.pyc
+*.cxx
+Makefile
+CMakeFiles
+cmake_install.cmake
+CPackSourceConfig.cmake
+CPackConfig.cmake
+CMakeCache.txt
+_CPack_Packages
+install_manifest.txt
+#
+# Top-level generic files
+#
+!.gitignore
+!magic.so
+!magic_64b.so
+

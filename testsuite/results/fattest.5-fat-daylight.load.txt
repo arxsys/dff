@@ -1,0 +1,12 @@
+cluster size:
+1
+number of entries in root directory:
+224
+number of fat:
+2
+oemname:
+MSDOS5.0
+reserved cluster:
+1
+sector size:
+512

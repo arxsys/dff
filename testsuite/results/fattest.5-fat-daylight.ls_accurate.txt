@@ -1,0 +1,9 @@
+/5-fat-daylight.zip
+/5-fat-daylight.zip/5-fat-daylight
+/5-fat-daylight.zip/5-fat-daylight/COPYING-GNU.txt/	18009
+/5-fat-daylight.zip/5-fat-daylight/daylight.dd
+/5-fat-daylight.zip/5-fat-daylight/index.html/	2499
+/5-fat-daylight.zip/5-fat-daylight/readme.txt/	419
+/5-fat-daylight.zip/5-fat-daylight/daylight.dd/Fat File System
+/5-fat-daylight.zip/5-fat-daylight/daylight.dd/Fat File System/winter.txt/	8
+/5-fat-daylight.zip/5-fat-daylight/daylight.dd/Fat File System/summer.txt/	8

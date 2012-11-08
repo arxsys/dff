@@ -1,0 +1,148 @@
+Digital Forensics Framework
+
+1. Introduction
+
+2. Installation
+ 2.1 Windows
+ 2.2 Linux
+3. Usage
+4. Support
+
+1. Introduction
+
+DFF is a simple but powerfull open source tool with a flexible module system
+which will help you in your digital forensics works, including files recovery
+due to error or crash, evidence research and analysis, etc. The source code is
+written in C++ and Python, allowing performances and great extensibility.
+
+Although dff is quite young, it already provides a robust architecture and
+some handy modules. You could download and try it via the Dowload page. Source
+code, Debian packages and even windows setup are available. Any contribution,
+suggestion or remark is welcome ! (see 4. Support)
+
+Nowadays computer forensic analysis tools are mainly large proprietary software
+developed by some well-known companies.
+
+Few free and open source tools offers the same type of fully integrated
+software, most of them are implemented as stand alone tools. Although some
+framework exists, they are not very user or developer friendly. That is why we
+decided to develop this tool as a free and open source and multi-platform
+framework.
+
+This project follows three main goals :
+
+- Modularity. In contrary to the monolithic model, the modular model is based on
+  an a host and many modules. This modular conception presents two advantages :
+  it permits to improve rapidly the software and to split easily tasks for
+  developers
+
+- Scriptability, it is obvious that the ability to be scripted gives more
+  flexibility to a tool, but it enables automation and gives the possibility to
+  extend features
+
+- Genericity, the project tries to remain OS independent. We want to help people
+  where they are ! Letting them choose any Operating System to use this
+  software.
+
+
+2. Installation
+
+2.1 Windows
+
+Python and Python QT have to be installed first.
+
+Two packages are provided for Windows, one with those two dependencies add to DFF installer and an other with DFF installer alone.
+
+Web-page where Python should be downloaded :
+http://www.python.org/download/releases/2.7.1/.
+Web-page where Python QT should be downloaded :
+http://www.riverbankcomputing.co.uk/software/pyqt/download
+
+DFF is provided with a Nullsoft installer. Users just have to launch it and
+follow instructions to install DFF.
+
+
+2.2 Linux
+
+Using distribution package :
+
+RPM and DEB packages are provided on http://www.digital-forensic.org. Graphical
+helper from window manager can be used when double clicking on the package.
+
+DEB installation from terminal :
+#> dpkg -i dff-<version>.deb
+
+RPM installation from terminal 
+#> rpm -i dff-<version>.rpm
+
+Compiling from sources :
+
+A GZipped tarball is also provided.
+Cmake and latest version of swig are needed (http://www.swig.org, developer have
+to compile and install the latest version himself).
+In the top-source tree type :
+$> cmake -DINSTALL=TRUE .
+It creates make files.
+To build type :
+$> make
+Install :
+#> make install
+Console Run :
+$> dff.py
+Graphical Run :
+$> dff.py -g
+
+3. Usage
+
+DFF reads a disk dump (for example from GNU 'dd' utils). Two user interfaces are
+provided ; graphical and console. Command-line console also sits in graphical as
+well.
+
+Graphical :
+Click on the 'File(s)' menu and select 'Open evidence file(s)', then add your
+disk dump.
+Right-click on the dump, in the 'Browser' tab, select 'Open with' and apply a
+filesystem module ; select 'file system' and 'fat' for example.
+Files appears in the 'Virtual File System' tab.
+Many informations are provided under 'Task Manager', 'Output' and 'Errors' tabs.
+
+
+Console :
+Opening a local folder :
+dff / > local --path /home/user/dumps --parent /
+
+--path is the directory to open
+--parent is a virtual node, first specify the root one : /
+
+Applying fat module on a dump :
+dff / > fat dumps/test.fat.dd
+
+Listing nodes :
+dff / > ls
+
+Completion is provided using the <Tab> key. User can obtain help using :
+dff / > man <command>
+
+
+4. Support
+
+Online chat is on an IRC channel : #digital-forensic on irc.freenode.net
+network.
+
+Main website : http://www.digital-forensic.org .
+
+3 mailing lists are provided :
+- User discussions about DFF : dff@digital-forensic.org, registration and
+  posting freely available.
+- Developers discussions about DFF : dff-devel@digital-forensic.org,
+  registration and posting freely available.
+- News about DFF releases and event : dff-announce@digital-forensic.org,
+  registration freely available, low level traffic.
+
+Archives of this mailing lists : http://lists.digital-forensic.org
+
+A project manager exists at https://tracker.digital-forensic.org , ideas and
+bug submited by e-mail will be reported on it.
+
+Documentation sits on http://wiki.digital-forensic.org.
+

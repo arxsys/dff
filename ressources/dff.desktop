@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=DFF
+GenericName=Digital Forensics Framework
+Exec=dff -g
+Icon=dff
+Terminal=false
+Categories=Qt;Utility;
+

@@ -1,0 +1,4077 @@
+DFF (Digital Forensics Framework)
+
+See the CHANGES.current file for changes in the current version.
+See the RELEASENOTES file for a summary of changes in each release.
+
+Version 1.2.0 (04 October 2011)
+===============================
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Tue Oct 4 12:50:38 2011 +0200
+
+    * Module: hexviewer
+    ** QGraphicsView is now instantiate with arguments ! QGraphicsScene is setted to None and QWidget to provided parent. If not instantiated with parent, it leads to crashes with the preview which destroys each widget
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Oct 3 19:08:29 2011 +0000
+
+    Change ui/gui/gui.py to add version number dynamically in version 1.2
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Oct 3 19:14:14 2011 +0000
+
+    * GUI: search
+    ** disable quick search functions since model are totally desynchro with filtering results. Start SearchWidget when clicking the binoculars icon
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Oct 3 18:27:57 2011 +0000
+
+    NTFS : boot change printf to DEBUG message
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 29 17:31:08 2011 +0000
+
+    * GUI: Interpreter
+    ** excecutes runsource in a thread to prevent GUI freeze for huge process
+    ** import useful class in the interpreter environment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Sep 28 15:53:38 2011 +0000
+
+    now sort the modules tags before creating the tags menu
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Sep 28 15:37:51 2011 +0000
+
+    k800i.py use new find syntax
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 15:43:28 2011 +0000
+
+    * Modules: web viewer
+    ** deactivate javascript and activate private browsing
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 15:33:07 2011 +0000
+
+    * Modules: batch
+    ** why removing \n ?
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 15:19:46 2011 +0000
+
+    * Modules: web viewer
+    ** When links are external, do not let the possibility to go on the remote URL
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 15:18:56 2011 +0000
+
+    * Modules: text viewer
+    ** when setting text, interpret it as PlainText
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 13:47:08 2011 +0000
+
+    * Modules: carverui
+    ** wait for the real carving process before returning
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 28 13:40:02 2011 +0000
+
+    * Modules: carver
+    ** removes print
+    ** changes tags from Search to builtins in carverui and carver.i to be not displayed in gui
+
+Author: fba <fba@digital-forensic.org>
+Date:   Wed Sep 28 01:38:35 2011 +0200
+
+    * Modules: open
+    ** better information when there's no module to handle types of a node
+
+Author: fba <fba@digital-forensic.org>
+Date:   Wed Sep 28 01:38:02 2011 +0200
+
+    * Modules: load
+    ** handles argument as it has to be...
+
+Author: fba <fba@digital-forensic.org>
+Date:   Wed Sep 28 01:36:56 2011 +0200
+
+    * API: loader
+    ** if a module has to be reloaded, before destroying its instance, unregister its configuration first
+
+Author: fba <fba@digital-forensic.org>
+Date:   Wed Sep 28 01:34:13 2011 +0200
+
+    * API: libtypes
+    ** argument, config and constant dtor implemented
+    ** add unregisterConf(string modname) method to remove an already registered configuration. This is mainly used when a module already loaded is loaded another time
+    ** module.py when creating Config, removes ownership of the config since it is owned in ConfigManager singleton
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 27 15:43:27 2011 +0000
+
+    * Build
+    ** removes useless linking with libmagic in datatype (does not link on Windows)
+    ** adds proper linking information with libmagic in magic api
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Sep 27 15:57:16 2011 +0200
+
+    Fixes for Windows version shipped with all dependencies.
+    There was a problem on Python and PyQt4 installation, Python was not installed for all users instead of PyQt4, resulting in launch failure and unusable Python Qt4.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 26 15:43:39 2011 +0000
+
+    * API: magic
+    ** removes useless python wrappers for libmagic
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 26 15:37:17 2011 +0000
+
+    * API: manager
+    ** changes import in manager to get MimeType and MagicType from libmagichandler
+    * Build: datatype
+    ** removes magichandler.py
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 26 15:20:13 2011 +0000
+
+    * API: datatype / magic
+    ** call to magic handlers is fully implemented in C++. This removes bad behaviour when calling dataType in two threads.
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon Sep 26 11:22:00 2011 +0200
+
+    * Attributes tree
+    ** Connect doubleClicked signal in order to catch attribute item
+    ** Display item name + value in a messagebox (Information)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 18:52:10 2011 +0000
+
+    * Build
+    ** removes no longer generated file in ui/gui/resources
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 15:51:01 2011 +0000
+
+    * API: GUI
+    ** removes bugs and bad widget size
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 15:21:52 2011 +0000
+
+    * API: GUI
+    ** removes calls on non existent checkboxattributes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 14:22:06 2011 +0000
+
+    * GUI: preview
+    ** when widget is not visible, do not refresh content
+    ** when used viewer is player, do not delete on close (otherwise, global audio / video / media are destroyed and player won't work anymore)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 12:57:46 2011 +0000
+
+    * API: GUI
+    ** selection of extended attributes to add new column was broken since there is now GC on VMap.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Sep 23 14:26:51 2011 +0200
+
+    Updates Italian translation, thanks to Francesco !
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 12:14:15 2011 +0000
+
+    * API: loader
+    ** changes try / except based on ImportError to Exception when loading modules
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 12:10:22 2011 +0000
+
+    * GUI: search nodebrowser
+    ** disables sorting for each columns
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 11:44:23 2011 +0000
+
+    * GUI: search widget
+    ** __totalhits class attribute was not updated and was always setted to 0. This disables the possibility to export selected nodes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 11:43:07 2011 +0000
+
+    * GUI: search widget dialog
+    ** When extended attributes were added and then removed, they appeared in the QComboBox.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 23 11:40:10 2011 +0000
+
+    * GUI: search widget
+    ** better ergonomy. Path information has been moved at top
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 19:23:19 2011 +0000
+
+    * API: loader
+    ** Errors generated while loading a module are only provided after all succefully loaded modules
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 19:22:33 2011 +0000
+
+    * GUI:
+    ** Splashscreen no longers provide version
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Sep 22 15:43:57 2011 +0200
+
+    Updates translation:
+    - German, thanks to Denis !
+    - Spanish, thanks to Pablo !
+    - French
+    - Every others files remaining to update
+    Fixes typo in several files: dictionary & an attribute.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Sep 22 14:57:45 2011 +0200
+
+    Graphical clean of advanced search engine.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 13:48:20 2011 +0000
+
+    * Build: pff
+    ** libbfio.dll was not set as source_files resulting of unloadable module
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 13:47:24 2011 +0000
+
+    * Starter script
+    ** there were both spaces and tabs for indentation. IDLE does not seem to like it...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 13:17:47 2011 +0000
+
+    * Build
+    ** Automatic installer scanning work fine but CMAKE variables are GLOBAL from one directory to all its subdirectories but not available from parent's one... It's
+    needed to specify PARENT_SCOPE while using SET() command
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 13:14:28 2011 +0000
+
+    * Build:
+    ** two generated (uitopy) files in ui/gui/ressources were missing, resulting to bad packages generation
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 12:34:58 2011 +0000
+
+    * Build
+    ** dependencies binaries for Windows are no longer hand written in CMakeLists.txt. It now scan the content of the directory and find python, pyqt and vcredist
+    executable by itself
+    ** Minor version change from 1 to 2
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 22 12:32:47 2011 +0000
+
+    * Modules: web viewer
+    ** add __init__.py to be able to import module and to let cpack run properly
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 21 17:22:00 2011 +0000
+
+    * Build: readlines
+    ** copy _READLINE.dll from release directory into current_binary_dir
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 21 17:21:37 2011 +0000
+
+    * Build: ewf
+    ** changes ewf.dll to libewf.dll
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 21 17:20:45 2011 +0000
+
+    * Build: Search api
+    ** removes useless dll and changes name tre4.dll to tre.dll
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 21 15:29:07 2011 +0000
+
+    * GUI: Preview
+    ** Each generated widget (and so the underlying module instance) were never deleted because widgets were not deleted on close(). Refcount never reached 1
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Sep 21 15:26:27 2011 +0000
+
+    * API: Variant
+    ** adds VMap destructor. Removes lots of memory leak ! Before this patch, each time a method returning a VMap (map<string, Variant*>), the latter were never
+    delete.
+    ** python extended code for value method has been adapated to only removes ownership on vtime, vlist and vmap
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 16:08:55 2011 +0000
+
+    * API: VFS (Nodes and VLinks)
+    ** For attributes*, dataType and compatibleModules methods provided by Node and VLink, ownership of returned objects is transfered to Python by with %newobject
+    macro of SWIG (removes lots of memory leak !)
+    *** next commit will provide a new wrapper for delete_VMap in order to delete all contained pointers of Variant
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 16:01:49 2011 +0000
+
+    * Module: Fatfs
+    ** bootsector result attributes changed for "cluster size" to "sectors per cluster"
+    ** ReservedSectors node missed one sector and size was not handled correctly. Since ReservedSectors node starts at bootsector, dataType() method has been
+    overloaded to avoid infinite loop when postprocessing
+    ** UnallocatedSpace nodes didn't handle size correctly in fileMapping (forget to multiply by sector size...)
+    ** Memory leak free concerning _attributes method. opened VFile was closed but never deleted
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:55:46 2011 +0000
+
+    * API: Node
+    ** All attributes method have been rewritten and optimized.
+    ** Thanks to the new Variant ctor, all memory leaks have been removed. Temporary Variant are deleted and Variant based results relies on copy ctor
+    ** extension() method has been added which (as its name is self explanatory), returns the extension if "." is rfind in its name
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:54:52 2011 +0000
+
+    * API: VFS
+    ** removes warning comparison between signed and unsigned
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:51:47 2011 +0000
+
+    * API: Variant
+    ** reflects new constructor which changes wrapping number with SWIG
+    ** value() method in Python extended code removes ownership to avoid crashes !!!
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:48:26 2011 +0000
+
+    * API: Variant
+    ** A new constructor is provided to create a copy of a Variant (Variant::Variant(class Variant* origin)
+    ** In dtor, additionnal checks are done before calling delete, and pointers are set to NULL
+    ** In toString method, check if pointer is NULL
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:45:43 2011 +0000
+
+    * API: Filters
+    ** AstNodes are now able to evaluate relative attributes name
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:41:33 2011 +0000
+
+    * API: GUI
+    ** search_widget no longer emits signal when nodes match. It directly calls model addNode and current matching nodes counter is based on model rowCount() method
+    ** nodefilterbox no longer relies on signals to refresh view. It's FilterThread which directly calls addNode on its model
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:39:15 2011 +0000
+
+    * Module: cat
+    ** uses vfile search abilities (instead of reading buffer and applying python re) to find \n
+    ** fixes a bug when there were only one line
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:38:23 2011 +0000
+
+    * Build
+    ** add subdirectory(web) in viewer CMakeLists.txt
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:37:20 2011 +0000
+
+    * API: search node browser
+    ** remove useless connection to VFS events
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:35:32 2011 +0000
+
+    * API: GUI
+    ** changes fillingList method to addNode in vfsitemmodel class to have the same interface than ListModel
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:34:03 2011 +0000
+
+    * Module: Partition
+    ** removes unused variables
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:30:17 2011 +0000
+
+    * API: mimetree
+    ** mimetree extracts mimetype in compiled magic files (magic.mgc) and support version 7 and 8. The resulting extraction is a two-level tree filled with main
+    categories of mimetype (images, videos, ...) and their subcategories (jpeg, avi, ...)
+    ** This class was previously implemented in SelectMimeTypes file and has been moved in the datatype API
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 20 15:28:42 2011 +0000
+
+    * Modules
+    ** new viewer module to display html pages (css taken into account if found)
+    ** enhancement of text viewer (cat), which is streamed !
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 13 17:58:57 2011 +0000
+
+    * GUI
+    ** search widget: remove of dictionnary abilities and ts() for date time
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Sep 13 18:07:40 2011 +0200
+
+    Translation ; removes no more used strings from fba.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Sep 13 17:31:01 2011 +0200
+
+    Translation updates, adds strings to be translated in:
+    - Dff_de.ts, German translation
+    - Dff_es.ts, Spanish translation
+    - Dff_it.ts, Italian translation
+    - Dff_nl.ts, Dutch translation
+    - Dff_zh.ts, Chinese translation
+    Translates Dff_fr.ts ; French language file.
+    Also fix typo, rename 'pannel' to 'panel' everywhere in sources.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Sep 13 16:57:35 2011 +0200
+
+    Removes attributes checkbox in node browser buttons box and uses an icon instead, as others functions do.
+    So adds an icon for it, disabled or no.
+    Also swap icon states for thumbnail view, there was a misstake.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Sep 13 14:49:46 2011 +0200
+
+    Minor: removes unused and forgotten treeModel
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 13 12:38:08 2011 +0000
+
+    * API: vtime
+    ** just check if provided vtime in operator methods is not NULL else return appropriate boolean
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 13 12:34:54 2011 +0000
+
+    * API: Filters
+    ** add very bad and ugly try {} catch (...) because DFF lacks of exceptions
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 13 12:08:39 2011 +0000
+
+    * Modules: Carver
+    ** removes wildcard abilities in carving. Carver has to be rewritten for next release
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Thu Sep 8 16:00:38 2011 +0200
+
+    * Evidence dialog
+    
+    ** Set a fixed height size and inscrease default height size
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Thu Sep 8 11:39:33 2011 +0200
+
+    * Preview
+    ** Remove debug
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Thu Sep 8 11:32:26 2011 +0200
+
+    * Preview
+    ** Remove checkbox in preview dockwidget
+    ** Create a new checkable action (actionPreview) in view menu (mainwindow)
+    ** Connect this action to preview dockwidget (enable / disable preview)
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Wed Sep 7 11:42:19 2011 +0200
+
+    * Evidence dialog various bugfixes
+    
+    ** Change layout stretch factor for files formats
+    ** Do not add empty entry in list when cancel directory dialog
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 6 18:00:34 2011 +0000
+
+    * API: GUI
+    ** search_widget events has been changed and e.value.value() is now associated to a value begore emitting... (possible cause of not catchable exceptions)
+    ** ListNodeModel addNode method now takes node.this in argument
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Sep 6 17:54:11 2011 +0000
+
+    * API: Filters
+    ** event types are now an enum to use them easily. A new event has also been added --> EnfOfProcessing
+    ** when processing matched nodes are stored internally and can be request through matchedNodes() method
+    ** stop event is better handled (every astnodes received the event but main *process* method did not check the __stop attributes in their loop...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 18:44:14 2011 +0000
+
+    * Modules: FAT
+    ** adds unallocated space
+    ** adds slack space for regular files
+    *** default behaviour is to create all regular files slack space with .SLACK extension. There's also an option to check is the slack is empty. If empty (only
+    zero) nodes are NOT created
+    ** adds state information
+    **
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 16:51:18 2011 +0000
+
+    * Modules: FAT
+    ** removes compile warning (uninitialez / not used variables)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 16:42:41 2011 +0000
+
+    * Modules: FAT
+    ** add Unallocated and FileSlacks Nodes classes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 16:40:39 2011 +0000
+
+    * Modules: FAT
+    ** adds stateinfo while getting free clusters count
+    ** allocated clusters = total clusters - freeclusters
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 16:35:12 2011 +0000
+
+    * Modules: Fat
+    ** added fat type information (12/16/32) in results
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Sep 5 16:53:54 2011 +0200
+
+    add a fix
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon Sep 5 16:47:28 2011 +0200
+
+    
+    Slider operations are now implemented in pixel and string view.
+    String view should be considerated as beta version. Indeed some navigation features are not very intuitives
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon Sep 5 16:32:44 2011 +0200
+
+    You can now trigger the cursor or its area to navigate within the page view
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Sep 5 10:10:24 2011 +0000
+
+    * Modules: Partition
+    ** PartitionNode overloads dataType() method when it is an unallocated space node to avoid infinite loop with post-processing.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Sep 2 19:36:14 2011 +0000
+
+    * Modules: Fat
+    ** Adds file system slack space (size diff between reading file (parent) and total sector defined in boot sector)
+    ** Adds reserved sectors space
+    ** Adds FAT as Nodes with metadata (free cluster + allocated clusters) <-- algos have to be merged + bad cluster checks
+    ** When first FAT size is less than 10MB, it is loaded in RAM to enhance cluster reading. If size is greater or another FAT is used to request cluster, fallback
+    to read method (slower since reading 2 or 4 bytes at a time for each cluster... When there's a huge cluster chain it's too slow) Need to develop a read cache !
+    ** Adds Volume Label name as first root instead of "Fat File System". If none, it is setted to NONAME
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 1 14:05:03 2011 +0000
+
+    * Modules: ewf
+    ** changes return -1 to 0 in close() method when successful
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 1 14:02:50 2011 +0000
+
+    * Modules: hash
+    ** when several hash algorithms are provided, processed them all together in the reading loop and not one after one...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 1 12:56:50 2011 +0000
+
+    * Modules: Partition
+    ** cast in uint64_t pte->total_blocks (which is uint32_t) to avoid overflow and so bad size settings
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 1 12:55:58 2011 +0000
+
+    * API: Search
+    ** defines tre_free as tre_regfre on Windows platform
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Sep 1 12:54:46 2011 +0000
+
+    * Build process:
+    ** checks if compiling for WIN32 target on 64 bits platform to not set HAVE_64_BITS and -DSWIGWORDSIZE=64
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 31 17:43:35 2011 +0000
+
+    * Modules: Ewf
+    ** BUGFIX: when volume name was not define module crashed due a bad handling of returned value
+    ** hashes are provided in nodes attributes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 31 16:45:14 2011 +0000
+
+    * Modules: dos partitions:
+    ** Mostly rewritten to manage more information
+    *** unallocated space is now created
+    *** meta information are better handled
+    *** first extended partition (in mbr) is no longer created
+    *** manages up to uint32_t entries (primary + logical)
+    *** complete results
+    *** node fileMapping manages odd cases
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 16:29:40 2011 +0000
+
+    * Build process:
+    ** remove of add_custom_target(module ...) which caused strange behaviour. Provide yourself -i switch to command make if you don't want to stop at the first
+    encountered error
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 15:02:32 2011 +0000
+
+    * GUI: taksmanager widget
+    ** fixes a typo error which led to the unavailability of module's results
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 13:53:23 2011 +0000
+
+    * API: magic
+    ** bugfix in magichandler.py. When libmagic cannot determine type properly, buffer function return NULL. Check is now done if filemime exists, otherwise returns
+    "data"
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 11:23:52 2011 +0000
+
+    * API: GUI search_widget:
+    ** adds a Warning messagebox when compiling clauses throws an error
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 11:22:02 2011 +0000
+
+    * API: Filter
+    ** astnodes --> at compile step, call Search::compile() method instead of doing it (internally in search class) during processing
+    ** enables to know at compile time (and no longer at runtime) when a pattern is not valid
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Aug 25 11:14:44 2011 +0000
+
+    * API: Search
+    ** use internal tre_free instead of tre_regfree to avoid crashes when libtre uses system regex.h
+    *** in tre.h if the library is compiled with system regex --> #define tre_regfree regfree...
+    *** workaround is to declare extern void tre_free(regex_t*) and use tre_free directly
+    ** compile method which was private becomes public: __compile() --> compile(). It is used by filters api when compiling itself
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 18:33:36 2011 +0000
+
+    * API: search
+    ** on some architecture and depending of compiler (and flags), tre_regcomp has strange behaviour. tre_regncomp is now used
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 16:42:04 2011 +0000
+
+    * GUI: search_widget
+    ** BUGFIX: default name searches with regexp processor based on r() instead of re()
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 14:25:09 2011 +0000
+
+    * API: Graphical Search
+    ** FilterThread supports new Filter method processFolder:
+    *** (de)activate by using setOneFolder(True/False)
+    ** QuickSearch now handles to filter the current folder
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 14:24:28 2011 +0000
+
+    * API: Node
+    ** totalChildrenCount now handles depth
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 14:23:24 2011 +0000
+
+    * API: Filters
+    ** new method added to process one folder only --> processFolers(Node* folder)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 13:17:24 2011 +0000
+
+    * GUI: search_widget
+    ** removes default behaviour (debug) in filterThread
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 12:53:35 2011 +0000
+
+    * GUI: SearchWidget
+    ** search now supports stopping process
+    ** Events are managed in FilterThread which emit the a signal for progress bar (between 0 and 100), and for matched nodes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 24 12:50:50 2011 +0000
+
+    * API: Stop processing event
+    ** Filters, astnodes and VFiles can now stop their processing when receiving an event
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 23 13:06:40 2011 +0000
+
+    * API: filters:
+    ** remove 3 rules in parser.y (related to time_filter which added one reduce conflict). Need to "refactor" grammar
+    ** astnodes StringFilter for mime type only use "mime type" attribute and is now search as fixed string
+    ***  either you can search main categories such as "image" or more accurate categories such as "image/jpeg" but "jpeg" alone won't work. To enable jpeg, you have
+    to provide a processor by providing a filter such as mime == w("jpeg", i)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 22 19:37:38 2011 +0000
+
+    * GUI:
+    ** When filtering Mime types are based on mime types found in compiled magic file
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 22 17:14:35 2011 +0000
+
+    * Build process
+    ** Find{TRE,AFF,EWF,BFIO,PFF} enhancements to be able to compile version programs on Windows.
+    ** On Windows, no longer need to modify include files of bfio, pff and ewf
+    * Includes
+    ** stdint.h is now included when _MSC_VER >= 1600
+    * Module: ewf
+    ** strdup added when copying path variable to ewf::files
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 17 16:32:37 2011 +0000
+
+    * Build
+    ** clean of root CMakeLists.txt
+    * API search
+    ** remove define for tre functions call (minimum version is now 0.8)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 17 16:03:55 2011 +0000
+
+    * Build process:
+    ** BFIO, EWF, PFF and TRE needed variables are obtained via cmake modules
+    ** adds -D INCLUDEDIR= and -D LIBDIR= to add non standard include and library directories respectively
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 19:22:04 2011 +0000
+
+    * API: vfs
+    ** removes codes which does not compile on Windows Platform
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 19:20:53 2011 +0000
+
+    * API: search
+    ** adds wrappers to compile on Windows Platform (libtre differences in prototypes + __value class attributes forbidden with VS...)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 19:19:39 2011 +0000
+
+    * API: filters
+    ** adds try / catch block when performing keywords searches in node content
+    ** adds wrappers to compile on Windows Platform
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 19:16:47 2011 +0000
+
+    * Module AFF:
+    ** minor patch to compile and run with aff version lesser than 3.6.8 (default distribution packages are 3.5.12)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 19:14:31 2011 +0000
+
+    * Build process
+    ** enhancements:
+    *** will detect installed version of AFF library. If version > 3.6.6, "new" API is used in cpp (provides cmake module for AFF)
+    ** bugfixes:
+    *** build process for Windows Platform patch
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 16 15:47:03 2011 +0000
+
+    * Modules: ewf connector
+    ** the module is now libewf API 2 compliant (tested with 20110801 version)
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Aug 4 17:51:10 2011 +0200
+
+    search
+    * fix a bug in the quick search
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Aug 4 10:51:15 2011 +0200
+
+    search
+    * add a kind of fetch more in the widget displaying search results
+    * some tests are required
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Aug 3 16:24:02 2011 +0000
+
+    * Search API:
+    ** minor fix in wildcard search
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 2 16:32:03 2011 +0000
+
+    * Console
+    ** When generating arguments, if it is of type String, all escape are replaced ("\ ", " ")
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 2 16:30:36 2011 +0000
+
+    * Filter API
+    ** when compile method is called, check is done on root ast node to know if we need to delete the AST before compiling
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Aug 2 16:29:09 2011 +0000
+
+    * Filter API
+    ** All filters now handles correctly extended attributes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 18:05:29 2011 +0000
+
+    * Search API
+    ** adds #if HAVE_TRE in Search ctor to enable compile when library is not installed
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 18:01:37 2011 +0000
+
+    * Module find
+    ** tag changed from "search" to "Search"
+    ** description of expression reflects the good syntax
+    ** root node to save results changed from "Searched Items" to "Searched items"
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 18:01:08 2011 +0000
+
+    * widget Preview re-enabled
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 16:07:57 2011 +0000
+
+    * New module: find
+    ** console module providing filter capabilities
+    ** recursion control, save matching node under /Searched Items, verbose mode (print matching nodes during processing)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 16:07:17 2011 +0000
+
+    * Filter API
+    ** Filters dtor implemented
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 12:51:47 2011 +0000
+
+    * Carver
+    ** reflect changes in event structure
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 12:50:24 2011 +0000
+
+    * Filter API
+    ** progress information sent by event
+    ** refactoring of process method (split in two method: __process only for recursive filtering)
+    ** parser updated for time filtering
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 12:48:55 2011 +0000
+
+    * Events
+    ** changes in event struct. Predefined types can be found in an external enum named etype
+    ** event structure now handles event type based on an uint32_t
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Aug 1 12:47:56 2011 +0000
+
+    * Filter API
+    ** TimeFilter implemented
+    ** AstNode inherits EventHandler (event management not fully implemented currently)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Jul 28 16:21:44 2011 +0000
+
+    * Search API:
+    ** refactoring of method in charge to compile pattern (wildcard especially)
+    ** __wfind refactored and manages more cases
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Jul 28 16:19:08 2011 +0000
+
+    * Filter changes
+    ** refactoring of most of the code. The code is far more generic and far more redundant !
+    *** Main classes ares based on classical types encountered in the framework: Numeric, String, Boolean and Timestamps:
+    ** Parser has been enhanced, only references are used, each SAVE_STRING are now deleted at parsing time.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Jul 28 16:14:26 2011 +0000
+
+    * Find libtre package moved to main CMakeList.txt
+    ** Declaring -DHAVE_TRE in api/search/CMakeLists.txt did very strange behaviour conducting to segfault / aborted and so on... For example, datatypes, compiled
+    before search includes nodes.hpp which include vfile.hpp where search is used. At this moment, -DHAVE_TRE were not added to definitions, datatypes having a
+    different version of class Search. The issue were when calling new Search, sizeof this one were not always the good one...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Jul 27 11:14:23 2011 +0000
+
+    * Filter: adds file (or folder) filter and deleted (or not) filter
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Jul 26 19:27:09 2011 +0000
+
+    * Filter new keyword
+    ** Timestamp are managed:
+    *** either a timestamp number (UNIX) or a string formatted as follow YYYY-MM-DDThh:mm:ss
+    *** managed operators: ==, !=, >, >=, <, <=, in, not in
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Jul 26 19:22:57 2011 +0000
+
+    * Adds vtime ctor with string
+    ** Format must be YYYY-MM-DDThh:mm:ss (currently, no check are done, must be enhanced for release)
+    * Adds vtime comparison operators == != > < >= <=
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 25 16:14:35 2011 +0000
+
+    * MimeCmp::__createCtx(), adds wildcard (*) before and after provided pattern
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 25 16:04:24 2011 +0000
+
+    * fixes non assignation of this->__ctx in NameCmp
+    * std::string::compare() returns 0 --> add of == 0...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 25 15:36:03 2011 +0000
+
+    * add AstNode::compile method
+    ** call after ast has been created. It removes huge initialization process during ctor
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 25 14:54:11 2011 +0000
+
+    STILL EXPERIMENTAL
+    * Filtering work in progress
+    ** name and mime implemented
+    * Search wfind new algo (recursive)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Jul 20 19:00:51 2011 +0000
+
+    * refactoring of AstNodes
+    ** parser is more strict but nodes are directly typed based on the provided keyword (name, size, mime, time, ...)
+    ** far far faster than the Python PoC
+    * Size filtering is fully implemented, other will be very soon
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Jun 29 19:58:06 2011 +0000
+
+    * First commit of new filters API:
+    ** provides lexer and parser (rules + generated cpp and hpp)
+    ** provides Filter class for API
+    ** CMakeLists.txt and swig definition
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Aug 1 15:07:03 2011 +0000
+
+    Move 'module browser' before the separator in the list
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon Aug 1 15:12:39 2011 +0200
+
+    * Add a new graphical way to view / browse and apply modules
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Aug 1 13:44:37 2011 +0000
+
+    Add batch option to DFF man page
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jul 28 16:22:39 2011 +0000
+
+    add batch module to CMakeLists
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 26 15:19:16 2011 +0000
+
+    Add preview widget in cmakelists for install
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 26 15:00:15 2011 +0000
+
+    Add an ugly checkbox to activate/desactivate preview mode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Jul 25 11:27:41 2011 +0000
+
+    iodevice : check if file is open before using it
+    hexeditor : add closeEvent and preview mode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Jul 22 19:39:11 2011 +0000
+
+    Module hexedit add preview mode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Jul 22 14:27:04 2011 +0000
+
+    modules player: fix bug of phonon when opening multiple audio source, but could only have one video/audio stream
+    preview : add translation and icon
+    dff pro : add preview widget
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jul 21 16:52:29 2011 +0000
+
+    module cat : set cursor at top of the document, use c_display for console to avoid print in stdout when using gui
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jul 21 14:35:46 2011 +0000
+
+    add the preview widget ...
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jul 21 14:34:23 2011 +0000
+
+    viewerimage : Add 'preview' mode and change next/previous to parse node list on click
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jul 20 18:18:01 2011 +0000
+
+    start of the 'preview widget' need enhancement and dffierent 'viewer' modules too
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jul 20 14:59:30 2011 +0000
+
+    clean comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 19 17:45:38 2011 +0000
+
+    FIX ewf module, nicer to don't add void attributes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 19 17:41:22 2011 +0000
+
+    ewf module FIX for void attributes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 19 16:48:54 2011 +0000
+
+    Add header and remove some comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jul 19 12:00:02 2011 +0000
+
+    ewf module: remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Jul 18 19:28:46 2011 +0000
+
+    replace ewf module python implementation by a c++ implementation
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 18 18:02:45 2011 +0000
+
+    * mini patch for gui import issues
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jul 18 17:21:04 2011 +0000
+
+    * Implementation of search methods:
+    ** find implemented for fixed, wildcarded, regexp and fuzzy patterns (case sensitivity taken into account too)
+    ** rfind for fixed and wildcard patterns (regexp and fuzzy not implemented)
+    ** count for fixed and wildcard patterns (regexp and fuzzy not implemented)
+    * New methods in vfile to implement previous search capabilities:
+    ** same method naming as existing ones (find, rfind, count and indexes) with first argument being a configured search context
+    
+    Tests still need to be performed, especially concerning fuzzy matching.
+    Concerning wildcarded search, we (user and developers) needs to debate how to handle a pattern in a stream
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Jun 30 18:36:21 2011 +0000
+
+    * Refactoring of search API
+    ** dedicated class Search which wraps Regexp, Fuzzy, Wildcard and Fixed searches
+    ** link with TRE library concerning regexp and fuzzy searches
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jul 13 17:37:15 2011 +0000
+
+    CMakelists for ewf cpp
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jul 13 17:35:25 2011 +0000
+
+    Start of EWF module in CPP
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jul 13 19:27:44 2011 +0200
+
+    Removes unused designs, updates strings to translate, updates french language
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jul 13 17:43:56 2011 +0200
+
+    Design lifting = beautiful search
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jul 12 13:16:37 2011 +0200
+
+    gui-filters:
+    * last minutes changes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Jul 11 16:34:12 2011 +0000
+
+    add apswtest in CMakelist for developers only, should not be installed
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Jul 11 16:24:50 2011 +0000
+
+    CMake install for apswvfs
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jun 29 12:59:11 2011 +0200
+
+    Fix NTFS for valid files detected as deleted files, an integer overflow was present in attribute.cpp.
+    Also prints boot block parsing messages when loading module.
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 18:39:00 2011 +0200
+
+    gui-filters
+    * minor changes
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 16:42:03 2011 +0200
+
+    gui-filters:
+    * an other little modif about dictionnaries
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 16:03:53 2011 +0200
+
+    gui-filters
+    * can now open dir in new tabs
+    * fixe the timestamps syntax
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 15:42:24 2011 +0200
+
+    gui-filters:
+    * can now display attributes in search tab
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 14:01:10 2011 +0200
+
+    gui-filters
+    * some other minor changes to be syntax complient with the search engine
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 28 11:40:55 2011 +0200
+
+    gui-filters:
+    * modify a bit the syntax of the search clauses
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jun 27 17:20:50 2011 +0200
+
+    gui-filters:
+    * can now manually edit clauses and the query is derictly modified
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jun 27 17:02:04 2011 +0200
+
+    gui-filters
+    * modify the query generation
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Jun 24 17:07:52 2011 +0200
+
+    gui-filters:
+    * add a widget which permit to select one or several mime types to search
+    * the resulting string is not always well formatted
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jun 22 18:14:44 2011 +0000
+
+    FIX 'connections' parameter
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jun 22 16:40:42 2011 +0000
+
+    FIX mftentry validateSignature()  check if structure is allocated before using it...
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jun 22 14:14:39 2011 +0000
+
+    FIX open node in new tab
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Jun 22 13:45:24 2011 +0200
+
+    search
+    * modify the widget to load a dict
+    * use a list widget to see its content (not editable)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Jun 21 18:02:01 2011 +0000
+
+    Add output from modules in results widget from taskmanger
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Jun 21 15:42:29 2011 +0200
+
+    search
+    * modify the widget
+    * can add / delete clause
+    * can chose or / and operator between clauses
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jun 20 12:24:05 2011 +0200
+
+    * adding new Ui file for search
+    * modify the search widget
+    * generate a query that can be manually modified
+    * this is up to users not to input inconsistant values
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jun 16 18:41:57 2011 +0000
+
+    Clean apswvfs & apswtest, should work
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jun 16 16:58:47 2011 +0000
+
+    apsw vfs in api and test modules
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Jun 16 17:40:17 2011 +0000
+
+    FIX batch command scheduling (exec command only when previous one have finished)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Jun 5 22:49:22 2011 +0000
+
+    Add config key "extension-type" to detect file by extension
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat May 28 04:12:40 2011 +0000
+
+    Add a batch to dff :
+    dff --batch=path_tobatch_file or use the batch module : batch path_to_batchfile
+    the batch file are text file examples :
+    	# comment that will be displayed at exec of the batch file
+    	# load a fat dump with local
+    	# open dump.fat (open auto-detect file type and launch the corresponding module)
+    	local /home/examinor/dump.fat
+    	open dump.fat
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed May 25 17:48:10 2011 +0000
+
+    * Re-enables search after merging master back branch
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 23 20:50:17 2011 +0000
+
+    FIX spare module didn't get the argument value for spare and block size
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 16:58:55 2011 +0200
+
+    Fixes afflib found by cmake proper link
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Fri May 20 16:45:35 2011 +0200
+
+    Add AFF support in evidence dialog
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 15:45:10 2011 +0200
+
+    Latest PyQt version on Windows changes path of required binaries.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 15:33:32 2011 +0200
+
+    PyQt windows dependency 4.8.2 to 4.8.4 in CMakeLists.txt
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 15:12:46 2011 +0200
+
+    Another variable to keep
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 14:41:17 2011 +0200
+
+    NTFS ; revert bad free in attributes ; need to investigate.
+
+
+
+
+Version 1.1.0 (20 May 2011)
+===========================
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri May 20 13:52:02 2011 +0200
+
+    Adds zh to i18n process. Try to fix mem leaks in NTFS.
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Thu May 19 17:57:34 2011 +0200
+
+    Double commit :
+    1. DeviceDialog : Change from str() to QString.fromUtf8() for device informations
+    2. Bugfix NTFS issue : check if fullFileName is NULL permit to avoid segfault -> Check XXX && jmo in ntfs.cpp
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu May 19 13:43:29 2011 +0000
+
+    Translation : Chinese languages added thanks to Zhang Jun
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Wed May 18 18:05:32 2011 +0200
+
+    Change splashscreen to Version 1.1
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed May 18 17:49:20 2011 +0200
+
+    Re-enables app version sets from CMak\e
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Wed May 18 17:11:03 2011 +0200
+
+    Resolve Segmentation Fault Issue on NTFS module : Parsing Attributes -> resident Flags -> return 0 instead of continue (_data issue)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed May 18 15:09:24 2011 +0000
+
+    * Better handling of Orphaned files
+    ** if free cluster has already been walked earlier by walkDeleted, it won't be parsed
+    * Better attributes management in created nodes
+    ** dos attributes decoded, dos name provided
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed May 18 15:32:34 2011 +0200
+
+    Adds check for AFFlib, link with static version on linux at install.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed May 18 14:57:16 2011 +0200
+
+    AFF works on Windows. Also modifies CMake rules for thirdparty dll copy.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed May 18 14:27:11 2011 +0000
+
+    Change VTIME TIME_MS flag to TIME_MS_64 as it's already define by ms in some headers
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed May 18 14:05:24 2011 +0000
+
+    AFF: add cache size options and handle multiple input files
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed May 18 12:33:48 2011 +0000
+
+    * removes Nodefilterbox dependencies
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Wed May 18 13:21:25 2011 +0200
+
+    This commit fixes minor issue #126 by checking focus state of dockwidgets
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed May 18 12:14:52 2011 +0200
+
+    Modifies Visual Studio rule in many CMakeLists.txt, PREFIX .. no longuer needed.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue May 17 19:40:44 2011 +0000
+
+    * FAT module enhancements:
+    ** added slack space as attributes for not deleted files
+    ** for deleted files mapping does not rely on cluster chain:
+    *** get the first cluster and mapped size
+    * nodefilterbox and nodeviewbox patched
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue May 17 17:44:43 2011 +0000
+
+    FIX: use old find API for creating thumbnails
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue May 17 17:37:38 2011 +0000
+
+    PFF : Remove unused definition
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue May 17 17:57:20 2011 +0200
+
+    CMakeLists.txt update for PFF module to compile on Windows.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue May 17 15:35:42 2011 +0000
+
+    VTIME: add unix 64 bits time stamp to constructor, select between unix and ms 64bits with a flag, default is unix (if not specified)
+    AFF: update use only one open -> to be faster as multi open is really to slow on this lib, need to fix for multi file loading
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue May 17 11:54:35 2011 +0200
+
+    TreeModel / viewModel / *model / *view
+    * Fixes a couple of stuff : https://tracker.digital-forensic.org/issues/125
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue May 17 09:44:16 2011 +0200
+
+    Dutch translation update about #121, thanks to Bram.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon May 16 19:32:59 2011 +0200
+
+    Adds fine check for PFF library ; link with static version of the library in installation mode.
+    Compile without check on Windows because PFF is added separately.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon May 16 19:13:15 2011 +0000
+
+    * vmware compiler warnings remove
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon May 16 19:12:44 2011 +0000
+
+    * carver compiler warnings remove
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon May 16 19:12:13 2011 +0000
+
+    * API compiler warnings remove
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon May 16 18:06:17 2011 +0000
+
+    * removes some Warnings
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon May 16 18:05:37 2011 +0000
+
+    * removes some compiltation Warnings
+
+Author: sja <sja@arxsys.fr>
+Date:   Mon May 16 19:19:05 2011 +0200
+
+    FIX bug with WMI Devices with QT FileDialog  who CoInitialize before it, ... must be test under Windows XP
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 16 17:08:33 2011 +0000
+
+    devices StringList  is already define in vfs.i remove this definition
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 16 16:55:42 2011 +0000
+
+    EXTFS: avoid warning
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 16 16:48:27 2011 +0000
+
+    Correct some reported some warning
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon May 16 18:22:00 2011 +0200
+
+    This commit closes #122 ; typo in ui/conf.py.
+    This commit also adds a check for PFF library installation in top level CMakeLists.txt, remember libbfio from PFF have to be installed separatly. Without separate libbfio installation, usage of libpff
+    through DFF is not possible.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon May 16 17:51:29 2011 +0200
+
+    Spanish translation update refs. #121 , thanks to Pablo.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon May 16 17:25:51 2011 +0200
+
+    Translatable string in file nodeviewbox.py adds to dff.pro, related to #121.
+    Updates french translation for it.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 16 13:51:51 2011 +0000
+
+    vfile::vread Change error message
+
+Author: sja <sja@arxsys.fr>
+Date:   Mon May 16 14:34:58 2011 +0200
+
+    WDEVICE avoid warning
+
+Author: sja <sja@arxsys.fr>
+Date:   Mon May 16 13:21:50 2011 +0200
+
+    VFile::Read check if there is enough memory to allocate buffer
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon May 16 13:02:06 2011 +0200
+
+    Enhencement : Add a new icon in order to detect when thumbnails are activated or not into the nodebrowser
+
+Author: sja <sja@arxsys.fr>
+Date:   Mon May 16 12:49:12 2011 +0200
+
+    Initialize windows thread
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 16 11:28:30 2011 +0000
+
+    Add threading hpp to define for win thread and pthread
+
+Author: jmo <jmo@digital-forensic.org>
+Date:   Mon May 16 12:24:11 2011 +0200
+
+    Relove Open as New tab bug : pass node.absolute() to getnode function
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun May 15 22:57:57 2011 +0000
+
+    PFF use Variant to store buffer
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun May 15 21:41:20 2011 +0000
+
+    Remove some call to the filemapping cache
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun May 15 20:46:29 2011 +0000
+
+    FIX mfso cache filemapping
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun May 15 18:09:45 2011 +0000
+
+    Add cache for mfso filemapping and lock for mfso opened vfiles
+
+Author: mcleodz <mcleodz@mojo.(none)>
+Date:   Sat May 14 16:30:25 2011 +0200
+
+    Resolve Issue Enhancement #121, now a dialog box pop up when try to bookmark with none selected nodes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu May 12 23:03:32 2011 +0000
+
+    mfso::close() remove delete fdinfo as it's deleted by fdremove
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu May 12 20:33:29 2011 +0000
+
+    Remove comment and indent correctly
+
+Author: sja <sja@arxsys.fr>
+Date:   Thu May 12 20:28:52 2011 +0200
+
+    DEVICES add icon for nodes
+    MFSO fix big problem with underlaying opened files -> this must be tested
+
+Author: sja <sja@arxsys.fr>
+Date:   Thu May 12 15:57:23 2011 +0200
+
+    FIX Loader print exception but didn't return
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu May 12 15:27:50 2011 +0000
+
+    Must use RELWITHDEBINFO in UPPER case in CMakeLists
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu May 12 15:15:09 2011 +0000
+
+    Add RelWithDebInfo in vs prefix for cmake
+
+Author: sja <sja@arxsys.fr>
+Date:   Fri May 6 18:28:58 2011 +0200
+
+    Change CMakeList to build lib and modules in the right place when compiled with VS2010
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 2 14:06:35 2011 +0000
+
+    getnode unicode fix
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 2 12:46:14 2011 +0000
+
+    LOCAL argument parent is no optional like it was before
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon May 2 12:45:47 2011 +0000
+
+    Fix unicode for console in getnode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 28 18:04:40 2011 +0000
+
+    Change size of bookmark and search icon to 128x128
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 28 17:59:13 2011 +0000
+
+    Modifit attach.png from size 64x64 to 128x128
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 28 17:38:04 2011 +0000
+
+    Fix memory leak in lib EXIF.py
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 28 12:30:46 2011 +0000
+
+    Remove AFF module from CMakeLists as a check if present but be done before compiling it
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 28 12:29:08 2011 +0000
+
+    Remove unused __init__.py from the CMakeLits
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 17:47:53 2011 +0000
+
+    AFF fix register_tree when list of files is given as argument
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 16:52:54 2011 +0000
+
+    AFF Remove some code comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 16:40:14 2011 +0000
+
+    AFF: add basical lock mechanism to avoid crash when used by multiple thread
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 14:18:07 2011 +0000
+
+    Remove PFF from CMakeLists must be build only if libpff with libbfio support is present
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 13:22:41 2011 +0000
+
+    Viewerimage Change  the qlabel that display the name of the picture by a qlineedit to avoid problem with too long absolute path that made wiget to automatically resize
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 11:35:01 2011 +0000
+
+    Vieweriamge Add unicode support in file names display in widget
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 26 11:32:29 2011 +0000
+
+    Add unicode support in module widget name
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Apr 22 17:10:36 2011 +0000
+
+    PFF: Add wrapper for DFF IO subsytem to be use with libpff, in order to made libpff module stackable
+    To use this module you must install libbfio before installing libpff (libpff with libbfio external support)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 21 14:24:09 2011 +0000
+
+    PFF: add options .i (to NOT create default items, recoverable, unallocated, orphans)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 21 13:06:22 2011 +0000
+
+    ressource: add the needed icon for PFF
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Apr 21 13:05:44 2011 +0000
+
+    PFF: Add more detailed results and some beautifull icons !
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 20 17:40:25 2011 +0000
+
+    VTIME : new contrustor uint64_t convert directly for MS 64bits timestamp format
+    TYPECONV : add some macro to convert endianess
+    PFF : didn't add transport headers if size is 0
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 20 16:24:35 2011 +0000
+
+    PFF: Attribute recipients now handle multiples recipients
+         Add Attribute conversation index
+         Attribute message header now handle multiple flags
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Apr 20 13:03:25 2011 +0000
+
+    * fixes bugs in datatype (datatype + magichandler)
+    * adds thread safe operations for datatype call (libvfs.i)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 19 16:34:29 2011 +0000
+
+    Add UTF8 display support for key in variant map
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 19 15:47:43 2011 +0000
+
+    PFF: add recovered items (fully deleted) as nodes
+         add orphan items as nodes
+         handle error differenly (set it in result)
+         change stateinfo according to current parsing state
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 18:16:38 2011 +0000
+
+    PFF node_task add percentage complete as attributes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 17:33:40 2011 +0000
+
+    PFF: add all type not fully handled by libpff (without attributes) as PffNodeEmailMessageText node
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 16:58:51 2011 +0000
+
+    PFF add item type note as node
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 16:38:22 2011 +0000
+
+    Add item type meeting as node
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 16:03:38 2011 +0000
+
+    Contact & task now inherit from PffNodeEmailMessageText to avoid redondant code
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 15:24:45 2011 +0000
+
+    Remove unnecessary comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 18 13:38:42 2011 +0000
+
+    FIX appointmnent & attachment for appointment/attachment/appointment & attachment/attachment using identifier whem possible
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Apr 18 12:56:22 2011 +0200
+
+    NTFS fix for file contents ending with chunks of 0
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Apr 15 12:11:28 2011 +0000
+
+    Modifiy getnode to be functional with unicode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Apr 15 11:40:49 2011 +0000
+
+    PFF now use iterator identifier to use less memory when it's possible
+    Need to fix attachment / attachment / appointment
+    Need to fix attachment / attachment / files
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Apr 14 17:26:31 2011 +0000
+
+    * api.vfs.vfs.py
+    ** added depth argument to manage maximum recursion
+    ** can take as arguments either a node or a string
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Apr 14 17:04:29 2011 +0200
+
+    indexation
+    * update the CMakeList and add missing files
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Apr 14 15:51:19 2011 +0200
+
+    indexation
+    * modify index and search
+    * the indexer is not a module anymore
+    * can configure the index a bit
+    * add a form to perform "advanced" searches (wip)
+    * can add / remove content in the index
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 13 23:20:49 2011 +0000
+
+    PFF use macro when possible for attribute, delete some comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 13 19:18:23 2011 +0000
+
+    Add task node (not finished yet lacks 2 attributes)
+    Start to use macro to made the code more redable and lot shorter
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 13 16:02:56 2011 +0000
+
+    Change datatype->type to return string rather that string*
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Apr 13 15:23:39 2011 +0000
+
+    PFF add item type contact
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Apr 13 13:24:21 2011 +0200
+
+    NTFS code cleaning, fix warning on 64b
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Apr 13 13:17:57 2011 +0200
+
+    NTFS fix for small content.
+     When content of a file is stored directly in a MFT, fixup (bad block in metadata detection feature) was replaced with an absolute offset instead of physical offset from NTFS image.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 12 19:02:16 2011 +0000
+
+    PFF : Appoinment is now ok
+    PFF : Appointment who as appointment as attachment work ok
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 12 18:58:04 2011 +0000
+
+    add thread block for compatibleModules who call dataType
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 12 18:57:05 2011 +0000
+
+    Improve unicode support
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 12 17:16:51 2011 +0000
+
+    check if str pointer is null and that all path return string in magichandler.py
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Apr 12 17:15:26 2011 +0000
+
+    block node->dataType in libvfs.i map insertion is not thread safe and could be the cause of the segfault
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Apr 11 18:44:10 2011 +0200
+
+    NTFS beginning of fix for heavy fragmented files, need validation to avoid regression.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Apr 4 12:27:24 2011 +0000
+
+    PFF: Add unallocated data to a node
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Apr 1 20:03:56 2011 +0000
+
+    * enables access from Python to pattern struct in libsearch.i and swig interface to handle unsigned char * type
+    * add method walk in vfs.py. It provides the same behaviour as walk in os module of Python
+    ** for dirpath, dirs, files in v.walk("/", [topdown=True|False]):
+    	do something
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Apr 1 16:59:05 2011 +0000
+
+    PFF : add unallocated page as mfso node
+    add icon attach for node attachment
+    modifiy mfso to have fdmanager accessible from inherited class (public) must set an accessor later
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 31 17:57:07 2011 +0000
+
+    Remove some old comment in viewerimage
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 31 17:52:49 2011 +0000
+
+    Add some forgotten type compatible with viewerimage
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 31 16:49:34 2011 +0000
+
+    little fix in aff module
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 31 15:48:22 2011 +0000
+
+    CMakeLists Remove swig optimization (swig -O)
+    Libexceptions remove unlock of thread because is set twice without swig -O
+    Libtypes.i add lock to variant
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 28 00:22:55 2011 +0000
+
+    use delete for pdata* for python read
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:50:10 2011 +0000
+
+    vmware remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:44:24 2011 +0000
+
+    remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:43:48 2011 +0000
+
+    remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:40:43 2011 +0000
+
+    remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:39:30 2011 +0000
+
+    carver.cpp remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:32:45 2011 +0000
+
+    shm module : remove unused variable
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:27:06 2011 +0000
+
+    Now compile with Wall flag in debug mode
+    Remove unitialized variable in ulocalnode
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 04:03:43 2011 +0000
+
+    Add result to AFF Module
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 02:23:59 2011 +0000
+
+    AFF Module is now fully working
+    Add void pointer type to Variant class
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 27 01:05:17 2011 +0000
+
+    New module AFF
+    AffNode Attributes as all info except for encryted blocks
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 25 16:19:36 2011 +0000
+
+    FIXES #113  EWF Now the id is set as Variant solve the negative handle problem
+    fix libvfs.i fixes the returned size in vread for python (it returned the readed size rather than the to read size)
+    reset time value in singleton module (could made strange time execution  value in taskmanager)
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 25 16:31:49 2011 +0100
+
+    Works on MacOS X.5 32bits, python-magic and libmagic has to be installed separatly.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 25 16:30:50 2011 +0100
+
+    Backward compatibility for Python < 2.6
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 25 16:02:43 2011 +0100
+
+    Dutch translation update thanks to Bram Mooij.
+
+Author: Pablo J. Rogina <pablojr@gmail.com>
+Date:   Thu Mar 24 19:17:42 2011 -0300
+
+    Fixed bug #112 - Labels not disabled in Preferences dialog
+    
+    When "No footprint" is checked some labels weren't disabled. Fixed by reviewing several setEnabled() methods to follow the proper logic.
+    
+    Signed-off-by: cma <cma@digital-forensic.org>
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 24 15:57:03 2011 +0100
+
+    Fixes NTFS crash or infinite loop when searching for parent of deleted or orphan items.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 20 21:56:01 2011 +0000
+
+    Fix somes strings in italian translation
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 17 17:56:09 2011 +0100
+
+    Adds license copyright and header in italian translation file.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 17 17:40:55 2011 +0000
+
+    * bugfix with output name variable.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 17 17:27:41 2011 +0100
+
+    EWF was not working on Windows. Fixes one missing letter n for Dennis.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 18:09:49 2011 +0000
+
+    Add authors of italian translation
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 17:41:21 2011 +0000
+
+    Add some missing string in italian translation
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 17:34:31 2011 +0000
+
+    Add italian translation to cmakelist and dff.pro
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 17:33:17 2011 +0000
+
+    New Italian translation by Francesco Acchiappati
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Mar 17 17:03:41 2011 +0100
+
+    Layout manager : Change fieldValidator to acces any characters for not INT types
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 17 16:12:00 2011 +0100
+
+    Removes useless string in loader when loading module without dependency. Removes LD_PRELOAD from linux launcher for installation, now also useless.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Mar 17 16:07:06 2011 +0100
+
+    layoutmanager:Line 541 : Remove retranslateUi in layoutmanager
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 17 14:36:14 2011 +0000
+
+    * update
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 17 13:59:11 2011 +0100
+
+    Adds missing spaces in translation files
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 12:37:50 2011 +0000
+
+    Fix ewf error message line 91
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 17 13:01:52 2011 +0100
+
+    Translation updates. Adds GPL header and copyright to each author.
+    Thanks to Denis for Dff_de.ts, Bram for Dff_nl.ts and Pablo for Dff_es.ts !
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 17 13:18:13 2011 +0000
+
+    Updated Spanish translation by Pablo J. Rogina
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 19:38:15 2011 +0100
+
+    Try to fix english.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 18:37:51 2011 +0100
+
+    Hexedit = hex viewer ... Translation update for fr
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Mar 16 18:21:11 2011 +0100
+
+    RELEASESNOTES' file:
+    * correction of a few typos.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 16 19:00:15 2011 +0000
+
+    RELASENOTES reformat some text
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 16 18:56:32 2011 +0000
+
+    RELEASENOTES wrap underline text
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 16 18:55:21 2011 +0000
+
+    set RELASENOTES to 80 col
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 18:08:45 2011 +0100
+
+    Modifies top level CMakeLists.txt to add manpage, readme and licenses on install
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 17:14:53 2011 +0100
+
+    Adds AUTHORS file
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 17:06:12 2011 +0100
+
+    Modules version OK, modifies remaining ones.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 16 16:52:20 2011 +0000
+
+    Remove ressources directory from top CMakeLists
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 16:17:08 2011 +0000
+
+    * carver.py has been added in versionning but is generated at compile time.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 15:34:19 2011 +0000
+
+    * remove of long key name in attributes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 15:33:15 2011 +0000
+
+    * Completer were removed in layoutmanager NavBar
+    * every signals are binded to completerWidget
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 16:19:32 2011 +0100
+
+    Adds version to each module, need test, some modules remains to be converted.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 15:54:30 2011 +0100
+
+    Dutch translation update, thanks to Bram Mooij.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 16 16:23:30 2011 +0000
+
+    Add changeslog for v1.0 and releasesnotes
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 16 15:44:55 2011 +0100
+
+    Licenses and Copyright updates.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 13:50:24 2011 +0000
+
+    * check if Index section exist. When changing from ENABLE_INDEXER OFF to ON, and having already started DFF, there is no index section in config.cfg which avoids
+    DFF to be started
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 13:39:25 2011 +0000
+
+    * indexing fully optional either in GUI or CMakeLists.txt
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 13:03:05 2011 +0000
+
+    * remove of Indexation in GUI preferences
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 16 12:43:06 2011 +0000
+
+    * hides search button in nodeviewbox
+
+
+
+
+Version 1.0.0 (16 March 2011)
+=============================
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 18:53:56 2011 +0000
+
+    Add ExtFs block attributes as an options ( this attribute will not be created by default )
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Mar 15 17:56:36 2011 +0000
+
+    * man module added
+    * variant, typeid mapping for bool was not done... so value method always retuned default bool ctor setted to False
+    * extract module patched
+    * carver: remove debug
+    * taskamanager bug fix
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Tue Mar 15 17:04:50 2011 +0100
+
+    (re)Change splash screen with "new" logo
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 16:32:10 2011 +0000
+
+    Add a generic flag for post_processing module without type compatibility (like hash)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 16:05:40 2011 +0000
+
+    FIX hash when no algo is choosed default to md5
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Mar 15 16:53:48 2011 +0100
+
+    ide
+    * refresh tool bar
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 15:47:18 2011 +0000
+
+    FIX column filter when module as not attributes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Mar 15 14:59:49 2011 +0000
+
+    * propertytable (varianttreewidget), nodeview (treewidget), taskmanager(varianttreewidget)
+    ** adapting column width to contents (enables scrollbar)
+    * carver
+    ** better GUI rendering and checkboxes mangement
+    ** aligned switch was not correctly handled
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Mar 15 15:07:18 2011 +0100
+
+    ide
+    * add "CTRL + S" (save script) in branch pre-1.0
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Mar 15 13:38:15 2011 +0100
+
+    extfs
+    * some stuff who are supposed to fix an extfs crash, but I could not reproduce the bug so I could not test. Good luck.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Mar 15 12:32:15 2011 +0000
+
+    * setting Variant for res["error"] and thisown = False
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 12:53:38 2011 +0000
+
+    Add refresh of menu for languages selection
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 15 12:52:41 2011 +0000
+
+    FIX for VMAP with key and value set to None (0) normally must be set to Variant() but avoid problem
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Mar 15 12:06:21 2011 +0000
+
+    * vfsitemmodel TreeModel
+    ** abort when providing an empty list to appendRows
+    * processus
+    ** remove of junk code
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Mar 14 18:59:04 2011 +0000
+
+    * carver almost done
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 18:53:53 2011 +0000
+
+    Add some translation path
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 18:53:28 2011 +0000
+
+    Add some french translation
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 18:37:04 2011 +0000
+
+    FIX now send an event to register is node
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 18:30:02 2011 +0000
+
+    FIX change module order autodetection
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 18:21:37 2011 +0000
+
+    EWF now take list of path rather than searching by itself all needed file
+    Dialog connector now add ewf in path 'Logical Files'
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Mar 14 18:41:01 2011 +0100
+
+    Removes old removed files from CMakeLists or fixes typo for install.
+    Modifies man page with new arguments.
+    Fixes in ui/history.py for console only run without history file.
+    Re-enable conffile in ui/ui.py, please remove *.pyc files and/or useless old directories before making noise.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 17:39:27 2011 +0000
+
+    node pass id of fd as no long , maybe better need to be tested on windows
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 17:19:38 2011 +0000
+
+    timeline now send event to refresh tree once Node are created
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 17:01:20 2011 +0000
+
+    Remove debug in print
+    SMSdecode conf was ported but not arg
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 15:46:42 2011 +0000
+
+    FIX sort problem when node as no magic/ magic mime attributes
+    FIX sort problem node was sort on dynamicAttributes when ask for fsoAttributes, so object never exist ...
+    FIX sort on Variant time is not implemented (?), so convert as python time object before sorting
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Mar 14 16:25:17 2011 +0100
+
+    Forces iconVisibleInMenu in several files, fixes icon display in menu for Ubuntu and Fedora for example.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Mar 14 16:13:30 2011 +0100
+
+    Clear linedit when reopen a node or path
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Mar 14 15:13:27 2011 +0100
+
+    Minor fix for preferences about history file.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Mar 14 15:09:53 2011 +0100
+
+    Check if Argument.Empty isChecked and not only Activated
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Mar 14 14:52:26 2011 +0100
+
+    Removes QScintilla checks/dependency, no longer needed.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Mar 14 14:51:21 2011 +0100
+
+    Activate Argument.Empty parameters in applymodule
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 13:23:16 2011 +0000
+
+    FIX bug in pixel view when buff size < Pixmap size making Qt segfault at pixmap creation
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 13:06:44 2011 +0000
+
+    Disable menurelevant when no choice is possible
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Mar 14 12:40:27 2011 +0000
+
+    Pass selected node to the module when use the menu 'Relevant modules'
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Mar 14 10:21:49 2011 +0100
+
+    BugFix layoutmanager for selectedNodes
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 13 22:25:57 2011 +0100
+
+    minor changes for VfsDialog
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 13 22:08:24 2011 +0100
+
+    * Conf in ui does not work
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 13 22:06:48 2011 +0100
+
+    * minor fixes in console completion
+    * GUI completer almost done
+    ** need to changed path in views when enter pressed
+    ** need to better handle when no / at the beginning
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 13 04:50:52 2011 +0000
+
+    add relevant module menu
+    need to auto exec ?
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sun Mar 13 00:16:33 2011 +0000
+
+    delete a print for test
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 13 01:14:39 2011 +0100
+
+    * console
+    ** better display message when errors encountered
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 23:53:00 2011 +0000
+
+    fix the launch of hexedit by default
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 23:29:06 2011 +0000
+
+    Add question box when double-click on node : Ask yes/ always/ no before applying a module , to let the user choose what he want if always click the question is not ask anymore
+    -> need translation
+    -> need to be add in global conf ?
+    Also now take a Viewers by default if available
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 19:04:34 2011 +0000
+
+    defaut icon as none in module and script
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 19:03:34 2011 +0000
+
+    Add module icon in place of default module icon if present
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 18:54:36 2011 +0000
+
+    Add description strings
+
+Author: sja <sja@digital-forensic.org>
+Date:   Sat Mar 12 18:37:53 2011 +0000
+
+    add possiblity to set icon for a modules
+    add icons for some modules
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 11 19:53:58 2011 +0100
+
+    Configuration update.
+    Checkboxes/states and path have default values or are fetched from a .ini file.
+    Help/documentation filepath managed from preferences.
+    No footprint mode (default) works well.
+    Add a --config to provide a configuration file instead of defaut one.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Mar 11 18:56:21 2011 +0000
+
+    * VFSDialog navigation bar added
+    * Completer WIP
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 11 18:39:43 2011 +0000
+
+    Modify __repr__ so str(variant) doesn't return the __repr__ as hex string also must be in __str__ not in __repr__
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Fri Mar 11 16:21:57 2011 +0100
+
+    BugFix when nodeselected was none
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Fri Mar 11 15:35:55 2011 +0100
+
+    Insert node selected in applymodule dialog
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Mar 11 11:52:16 2011 +0000
+
+    * better display in VariantTreeWidget
+    * When Opening Processus Information (double click on processus in taskmanager), provided arguments are shown
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 10 22:03:34 2011 +0100
+
+    Preferences dialog lifting.
+    Removes configuration directory from ui/gui
+    Puts conf.py directly in ui/
+    Puts translator.py in ui/gui/
+    Configuration has to be modified by something like a .ini, if exists and if footprint enabled.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 21:22:55 2011 +0000
+
+    Remove a old res.add_const ...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 10 20:43:29 2011 +0000
+
+    * carver in console mode implemented
+    * carver results enhancement WIP
+    * better display when calling print on Variant of type string or carray:
+    ** if string is not alpha num, print in hex format
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 20:33:42 2011 +0000
+
+    Add a space in the stateinfo
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 20:17:38 2011 +0000
+
+    Remove insert of a 0 value by default in layoutmanager argument list widget with predefine
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 18:26:36 2011 +0000
+
+    fixes #91 this fix exec time problem
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 16:31:45 2011 +0000
+
+    remove some unnecessary comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 16:24:15 2011 +0000
+
+    remove unneccessary file
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 16:17:15 2011 +0000
+
+    get rid of some unecessary commentary in modules and ui
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 10 17:06:36 2011 +0100
+
+    extfs
+    * clean the code
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 10 16:56:08 2011 +0100
+
+    There was several files with 2010 instead of 2011, in license header.
+    Also modify many files where url in licence starts with http: *// instead of http://.
+    Program version was not dinamically set at cmake step, ui/ui.py and ui/gui/gui.py ; fixed.
+    Also inc 0.9.0 to 1.0.0 in top level CMakeLists.txt
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 15:54:29 2011 +0000
+
+    Get rid of unecessary commentary in hpp & cpp file
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 10 15:41:47 2011 +0000
+
+    
+    Conflicts:
+    	api/gui/widget/nodebrowser.py
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 15:33:13 2011 +0000
+
+    Get rid of unnecessary comment in api/ python files
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 10 15:32:37 2011 +0000
+
+    * bug fixes in module fg
+    * fixes in console
+    ** manages thread correctly both in console and gui console
+    ** better error handling: more user friendly
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 15:23:01 2011 +0000
+
+    Remove unnecessary comment
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 10 16:01:33 2011 +0100
+
+    IDE
+    * Modify module skeletons so they can be loaded by the new API.
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 10 15:54:26 2011 +0100
+
+    model (minor commit)
+    * add a translation in TreeModel
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 10 15:48:40 2011 +0100
+
+    Updates translation files, using already (obsolete) translated strings, but some untranslated strings remains in dutch, german and spanish files.
+    Removes useless translated strings in every .ts files.
+    Modify design of preferences, for index tab to look better, also make title of nodeviewbox untranslatable, this title is not viewable.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 13:57:13 2011 +0000
+
+    FIX block of shell in GUI, A line was put in else (bad indentation ?)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 13:35:07 2011 +0000
+
+    Uncomment print for gui module in console
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 10 13:10:46 2011 +0000
+
+    * changes debug verbosity in console
+    * better completion on predefined parameters
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 10 13:30:06 2011 +0100
+
+    Misc
+    * remove QSortFilterProxyModel
+    * remove debug displays in extfs Module
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 10 11:44:47 2011 +0000
+
+    Remove init of qwidget in __init__ to block launch of gui script in console
+
+Author: fba <fba@digital-forensic.org>
+Date:   Thu Mar 10 02:24:53 2011 +0100
+
+    * better completion management
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 9 20:37:27 2011 +0000
+
+    FIX modules argument for new api
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 9 19:20:36 2011 +0000
+
+    * new python magic had changed naming convention
+    ** try / except added in magichandler to reflect it
+    * nodefilterbox.py
+    ** try / except on ImportError when indexer module not compiled
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 9 18:21:21 2011 +0000
+
+    * remove of comment in eventhandler.cpp
+    * libexception
+    ** remove of Python thread block with notify method
+    * argument
+    ** argument can now store subarguments
+    * variant
+    ** manages argument typeid
+    ** bugfixes in variant.cpp
+    *** strings are now stored in __data in std::string* str indead of ptr
+    *** for CArray type, provided array is now converted to string and stored in __data.str
+    *** changes in to* methods reflect these changes
+    ** enhancement
+    *** toHexString method now handles std::string and char* type. Resulting hexstring has the format of a classical hexdump
+    ** bugfixes in libtypes --> Variant(PyObject*, uint8_t) method
+    *** for typeId::int16_t in PyInt_Check || PyLong_Check, bad value was passed to Variant()
+    *** for typeId::CArray in PyString_Check, string::c_str() return a const char*, add a (char*) cast. Otherwise, a boolean Variant was created
+    *** for typeId::Char in PyString_Check, let the possibility to provide and empty char
+    * carver
+    ** refactored and split in several modules:
+    ** carver
+    *** c++ carver based on new possibility of subargument
+    ** GUI
+    *** Tow possibilities: use predefined patterns and user defined patterns
+    *** GUI carver is a wrapper for the c++ carver which generate the arguments
+    ** UI
+    *** carver for console is under development
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Mar 9 17:12:09 2011 +0100
+
+    indexation
+    * use _CLNEW and _CLDELETE instead of new and delete with clucene objects
+    * change the default index path
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Mar 9 15:29:37 2011 +0100
+
+    Fixes for content of NTFS ADS files, parent node was not set.
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Mar 9 14:43:53 2011 +0100
+
+    model
+    * an other fix
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Mar 9 14:29:19 2011 +0100
+
+    model
+    * bug fix in vfsitemmodel
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 15:55:47 2011 +0000
+
+    Delete all none use CLucene headers ....
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 15:47:48 2011 +0000
+
+    Add pipe_exec tagged builtins in process
+    Made change in CMakelists
+    Add error as Variant in processus
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Mar 8 16:36:02 2011 +0100
+
+    indexation
+    * remove useless search fields
+    * modify a bit display of search results (minot chnages)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 15:30:18 2011 +0000
+
+    add eval exp and CMakeList is now uptodate
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 15:27:28 2011 +0000
+
+    Port evalexp to new API didn't use old argument hex because now numeric value are always displayed as decimal and hexadecimal
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 15:15:07 2011 +0000
+
+    Remove this modules as it must be ported with a correct api
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 14:02:29 2011 +0000
+
+    fix to run not to work well ..
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 8 13:45:55 2011 +0000
+
+    Add a minimalistic libindex.i to avoid wrapping all libCLucene
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Mar 8 12:48:09 2011 +0100
+
+    Adds check for CLucene. We also check for clucene-config.h in /usr/lib, what is ugly but it is the way CLucene stores its config ...!
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Mar 8 11:42:32 2011 +0100
+
+    configuration index
+    * create index director(y)(ies) only when users click on the 'OK' button of the preference
+    * BUG : the user cannot change the index directory when launching the indexer module
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Mar 7 18:37:19 2011 +0100
+
+    index + configuration
+    * can now chose the index directories usinf Edit -> preferences
+    * modify indexer and search so they use the configuration to create / locate the index file
+    * add icons
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Mar 7 18:09:20 2011 +0100
+
+    to merge
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Mar 7 11:59:53 2011 +0100
+
+    model
+    * an otehr fix
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 6 18:51:29 2011 +0100
+
+    * carver porting WIP. Need tracking segfault in boyermoore search
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Mar 6 17:49:22 2011 +0100
+
+    * fixes compile error on 64 bits platform for libtypes.i
+    ** do not forget to add ${CMAKE_SWIG_FLAGS} when adding new definitions !
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Mar 4 19:40:45 2011 +0000
+
+    * fileinfo ported to new API
+    * enhancement for console printer
+    ** manages termsize
+    ** manages max depth for Variant Tree
+    ** manages max items to print for VList
+    * variant
+    ** implements toString for boolean type
+    * libtypes.i
+    ** implements value() for boolean type
+    * shell gui
+    ** hook for VariantTreePrinter.__[nt|posix].terminalSize to ShellView.get_term_size
+    * ui class
+    ** ability to provide wait to ui.cmd(line, wait=False)
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 18:48:09 2011 +0000
+
+    add icon for mailbox
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 15:37:07 2011 +0000
+
+    FIX property table to display compat modules not only for node as file in filesystem but also for every node with content
+    FIX vmware modules return NULL in virtual methode that must not be overwritted
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 15:08:11 2011 +0000
+
+    FIX local bug with post_process on one file because of registering before adding to internal file list -> put original file directly in the Node
+    PORT taskmanager to new attributes api
+    CHANGE argument of winreg to be post_processable
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 4 14:58:36 2011 +0100
+
+    Fixes timeline failing to found valid time, especially with extfs.
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 13:42:58 2011 +0000
+
+    Port post_process to new argument system
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 13:22:06 2011 +0000
+
+    Correct if vmap == NoneType in case of no _attributes in a modules
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 13:12:04 2011 +0000
+
+    restore magic handler
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Mar 4 14:08:33 2011 +0100
+
+    Reverts configured file commited with local variables
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Mar 4 13:31:17 2011 +0100
+
+    search / indexation :
+    * modify the search widget
+    * add the indexer module (unfinished)
+    * search results added in 'Searched items' node, at the VFS root
+    * exception on regexp filtering
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 12:04:12 2011 +0100
+
+    FIX conflict datatype
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Mar 4 12:02:07 2011 +0100
+
+    FIX all singleton
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 20:18:05 2011 +0000
+
+    FIX include in #define win
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 3 19:21:17 2011 +0000
+
+    * new feature: VmWare modules is now available !
+    * fixes minor issue in utils and action to pop up module configuration dialog when there are more than one argument
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 19:21:02 2011 +0100
+
+    Singleton in Shared memory for windows ... must test on linux
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 3 17:27:11 2011 +0000
+
+    * Volatility 1.3 is now arguments / conf compliant
+    * enhancements in applymodule
+    * DialogNodeBrowser implemented when asking user for node selections
+    * reflects changes in layoutmanager and VfsDialog
+    ** set good selectionMode when only one node or several needed
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 16:45:14 2011 +0100
+
+    FIX NTFS SetDateToString for Windows
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 16:42:46 2011 +0100
+
+    FIX NTFS MAC TIME on Windows
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 17:19:12 2011 +0000
+
+    Time.h is no in vtime -> because Time.h is a standard unix headers ...
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 16:50:38 2011 +0000
+
+    unix devices
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Mar 3 16:14:32 2011 +0100
+
+    Windows registry module initial commit. Code by Jeremy Mounier.
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 3 15:55:24 2011 +0100
+
+    gui / model:
+    * display '+' button ONLY when nodes have children in the  qtreeview
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 13:33:17 2011 +0000
+
+    update devices dialod for linux
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 13:32:47 2011 +0000
+
+    move old windevies to devies
+    remove tmp.py in extfs
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Mar 3 13:31:47 2011 +0000
+
+    Port linux devices to new argument API
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Mar 3 13:00:46 2011 +0100
+
+    gui / model
+    * minor fixes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Mar 3 10:44:56 2011 +0000
+
+    * adds option to gen_node module for providing number of node to create
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 2 19:27:04 2011 +0000
+
+    remove comment
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 2 18:33:28 2011 +0100
+
+    dialog devices window up to date
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 2 19:08:38 2011 +0000
+
+    Fix node name insertion
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Mar 2 18:30:53 2011 +0000
+
+    * port of show_db
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 2 17:49:58 2011 +0100
+
+    Windevices and devices widget is now ported to new argument api
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Mar 2 13:30:46 2011 +0100
+
+    tree model / tree view
+    * replaced the model by QStandardItemModel to improve performances
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Mar 2 11:37:47 2011 +0100
+
+    Change windevices module tag to Connectors
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Mar 1 19:11:56 2011 +0000
+
+    * libexceptions --> added handler for const char *
+    * variant --> added Variant.toString() for Path type
+    * utils --> VariantTreePrinter class allows to print Variant, VMap and VList easily
+    * builtins porting WIP
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 1 19:08:42 2011 +0100
+
+    Windevices ported to new argument API, GUI interfaces must be changed and modules must be tested
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 1 18:06:25 2011 +0000
+
+    add "orignal path" attributes to linux version of local mod
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 1 18:00:19 2011 +0000
+
+    Add Path argument for local module
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 1 16:58:01 2011 +0100
+
+    Port LOCAL to windows add "orignal path" key in attributes for aff4 modules
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Mar 1 12:22:32 2011 +0100
+
+    FIX typedId problem on windows std::map<char *, xxx>.find( char *) compare pointer value not  *(char *) content value
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Feb 28 19:09:26 2011 +0000
+
+    * adds builtins cd and ls
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Feb 28 18:08:40 2011 +0000
+
+    * libypes:
+    ** when boolean PyObject, PyLong_Check and PyInt_Check matches... Taking into account when creating Variant
+    * console + completion, better tricky cases handling
+    * extract: corrected some errors
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 25 19:30:24 2011 +0000
+
+    * console, minor patches ;)
+    * modules extract up to date
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 25 18:44:55 2011 +0000
+
+    * patch for a stupid mistake !
+    ** loop with non initialized values are bad !!! Thx vertrex to have audited it ;)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 25 17:59:52 2011 +0000
+
+    * console / completion / raw_input terminated !
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 25 13:14:30 2011 +0100
+
+    Modify library load order for windows in ApiManager
+    Start modificaiton of Local for new argument system, and list of nodes
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Feb 25 12:52:51 2011 +0100
+
+    NTFS optimize failed ; reverting for a more stable module.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Feb 25 12:36:08 2011 +0100
+
+    Removes old useles and slow Element class in list_thread.py
+    Creates node matching by date range in timeline.py to made 'Export' reworks when selection (in navigation panel) is active.
+    Need to:
+     - refresh vfs when node has been exported (VLink created), especially tree on the left
+     - improves dichotomic matching ; it as actually too slow when select/zoom/sekect/zoom
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Feb 25 12:24:07 2011 +0100
+
+    Add missing EXPORT for Windows
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 24 20:34:38 2011 +0000
+
+    * Console porting almost done.
+    * completion rewrite from scratch with context manager used by console too
+
+Author: sja <sja@digital-forensic.org>
+Date:   Thu Feb 24 18:34:30 2011 +0000
+
+    convert string to UTF-8
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Feb 24 15:36:01 2011 +0100
+
+    tree view
+    * display a progress bar when a lot of nodes are expanded
+    * gui freeze when a lot of nodes are added at the same time
+    * minor changes in gen_nodes.py module, ignore
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Feb 24 11:46:42 2011 +0100
+
+    Adds dichotomy to timestamp lists ; improve speed.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 23 19:26:32 2011 +0000
+
+    * new style console in progress
+    ** merging setContext, split_line and so in one big class to manage all context instantly
+    ** everything based on python re
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 23 17:47:53 2011 +0000
+
+    * Argument class:
+    ** adds method parametersCount()
+    
+    * console completion
+    ** working and API compliant
+    ** manages argument with list as input parameters
+    ** merge of completeNode and completePath --> completePathes
+    ** STILL MISSING
+    *** check before completing if maximum argument has been provided for input list
+    *** managing completion when braquets are present
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 22 19:43:59 2011 +0000
+
+    * Console completion WIP almost done
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Feb 22 19:42:11 2011 +0100
+
+    Modify loader to load a module even directory (package) name and .py file (module) are equal.
+    Add timeline module ; fetch all timestamp from children of a node and create a nice view.
+    Several speed improvements can be made to this module.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Feb 22 17:45:09 2011 +0100
+
+    Add explicit typing to vtime for exif metadata extraction.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Feb 22 13:14:11 2011 +0100
+
+    NTFS optimize
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 21 12:08:11 2011 +0000
+
+    Add gen_nodes modules for testing purposes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 21 12:06:22 2011 +0000
+
+    start to include fetch more for treemodel
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 18 19:06:56 2011 +0000
+
+    console compliance in progress
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Fri Feb 18 14:11:43 2011 +0100
+
+    Resize layouts inside the dialog
+
+Author: fba <fba@digital-forensic.org>
+Date:   Fri Feb 18 10:41:56 2011 +0100
+
+    * starts console changes to be new API compliant
+    * Config::argumentsByFlags method now supports partial flags
+    ** it's possible to request argument by providing 1, 2 ored, 3 ored flags
+    * minor changes in libtypes.i to provide python wrapper for
+    ** std::list<Constant*>
+    ** std::list<Config*>
+    ** std::map<std::string, Constant*>
+    ** std::map<std::string, Argument*>
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 17 19:56:57 2011 +0000
+
+    * re-enables right-click Open with
+    * when modules have no results, popups a simple dialog telling no results...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 17 18:34:23 2011 +0000
+
+    * results are now re-enabled and are more user friendly
+    * partitions has been enhanced to provide better results
+    * propertytable has been cleaned and simplified
+    * new gui class to render Variant (map + vlist and classical values)
+    * translation updates
+    * env no longer exists (who used it ?)
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 17 11:45:32 2011 +0100
+
+    rewrite of open local files and new icon style in mainwindow
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Feb 16 19:14:40 2011 +0100
+
+    treemodel
+    * some nodes do not appear in the tree (must be solved)
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 15 19:29:06 2011 +0000
+
+    * update of extfs.i to re-enables mime-type
+    * remove obsolete code in cat.py
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 15 19:14:37 2011 +0000
+
+    
+    * confmanager is implemented
+    * all modules have been upated to addConstant() mime-type
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Feb 15 17:47:46 2011 +0100
+
+    extfs
+    * version pre1.0
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Feb 14 19:48:24 2011 +0000
+
+    Start implementation of ConfigManager class
+    * this singleton is used to handle all generated configuration and be available in C++
+    * it's a kind of replacement to old env class
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Feb 14 17:59:15 2011 +0100
+
+    Rework layoutmanager with VFSDialog
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 14 14:20:35 2011 +0000
+
+    add larger files size support to viewerimage
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 14 13:55:19 2011 +0000
+
+    come back of the fuse modules
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 14 13:04:30 2011 +0000
+
+    change cmakelists for fuse
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 14 13:04:13 2011 +0000
+
+    mv fuse to connector
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Feb 14 10:30:28 2011 +0100
+
+    Applymodule : user can choose to add bot files or directory
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sat Feb 12 19:25:58 2011 +0100
+
+    Updating modules:
+    * ewf, shm, unzip, hash and touch
+    * need testing
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 11 15:44:05 2011 +0000
+
+    * merge attributes fully implemented
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 11 15:12:29 2011 +0000
+
+    * min / max for input parameters of type implemented
+    * check done + generation OK
+    * merge mostly implement
+    * hexviewer ported
+    * opening hexviewer with right-click enabled
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 11 12:39:06 2011 +0000
+
+    * temporary fix in layoutmanager VfsDialogs, remove of proxymodel (it always segfaults...)
+    * minor patch in layoutmanager
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Feb 11 13:33:47 2011 +0100
+
+    sortitems
+    * can now sort by deleted nodes
+    * need some refactoring
+
+Author: fba <fba@digital-forensic.org>
+Date:   Fri Feb 11 03:25:40 2011 +0100
+
+    * add minimum and maximum field for argument taking list as input
+    * update of merge and cut
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 19:31:54 2011 +0000
+
+    * minor changes in libtypes.i for error messages
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 19:22:08 2011 +0000
+
+    * more error messages and better check when empty list provived in place of required parameters
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 19:03:07 2011 +0000
+
+    * more explicit error messages in Config::generate
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 18:46:52 2011 +0000
+
+    * adds Constant class
+    * adds new methods to Config to support Constant
+    * patch libtypes:
+    ** in Variant(PyObject*, uint8_t) to convert string to [u]int[16][32][64]
+    ** in Config::generate to try catch directly on argument iteration to be able to throw the name of the current arguments with bad value
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 10 19:32:02 2011 +0100
+
+    Last apply module version, with single|list node creation
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 10 18:26:17 2011 +0100
+
+    Convert to node argument, improve layoutmanager
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 10 17:12:16 2011 +0100
+
+    Add error dialog when bad configuration in apply module, set widget validator by typeid
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Feb 10 14:47:47 2011 +0100
+
+    vfs model
+    * minor graphic changes
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 13:36:47 2011 +0000
+
+    When an argument is optional and is not provided, do not process its value
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 12:56:50 2011 +0000
+
+    * adds missing throw (std::string) for declaration methods in libtypes.i
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 10 12:38:34 2011 +0100
+
+    First step of module validation : Aborte need debug
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Feb 10 12:12:04 2011 +0100
+
+    vfsitemmodel
+    * add header dynamically in the table view
+    * add possibility to display the data type as a header in the tavble view
+    * can sort by the different headers
+    * performances issues when sorting by type (??)
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Thu Feb 10 11:54:25 2011 +0100
+
+    Add pixmap and change layout of applymodule in designer
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 10 09:45:53 2011 +0000
+
+    * just renaming changes in config.hpp/cpp
+    ** argumentBy changed to argumentsBy since each method returns a list
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 9 20:15:32 2011 +0000
+
+    * conf::generate(PyObject*) implemented. Need to be tested and stressed
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Feb 9 19:08:39 2011 +0100
+
+    * Portage of spare and cut module with new argument system, Add Argument.Empty in applyModule
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Feb 9 17:30:43 2011 +0100
+
+    * Applymodule dialog : code and shape clean
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Feb 9 16:23:29 2011 +0100
+
+    Change applymodule widget
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 9 15:01:03 2011 +0000
+
+    * remove declaration of pyObjectToVariant in libtypes.i
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 9 14:57:15 2011 +0000
+
+    * class configuration has new implemented methods
+    * libtypes.i compiles and has been cleaned
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Feb 9 14:51:02 2011 +0100
+
+    gui
+    * refresh view when an item is added
+    * refresh view when a column is added in the qtableview
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Feb 9 14:51:00 2011 +0100
+
+    Apply module integration Work In progress (auto creation of widgets)
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Wed Feb 9 11:58:01 2011 +0100
+
+     attributes
+    * modify the pop up so it handles advanced attributes
+    * unused for now
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 8 19:28:45 2011 +0000
+
+    add new method Node.ynamicAttributesNames that return all modules name that have applyed DynamicAttributes
+    add new method std::list<std::string >* Node.dynamicAttributes(names) that return all the attributes from one dynamic modules
+    del a print debug in metaexif
+    pass nodebrowser event to vfsitemmmodel
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 8 19:24:20 2011 +0000
+
+    * added Variant::Variant(bool)
+    * Variant.toBool()
+    * convert to bool
+    * reflect changes in libtypes.i
+    * changes Parameter::Fixed --> Parameter::NotEditable
+    * changes Parameter::Customizable --> Parameter::Editable
+    * when no parameters field defined, assume Editable (Argument::Argument())
+    * reflects all these changes in config of local.i and hash.py
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 8 18:17:19 2011 +0000
+
+    new methode in node fsoAttributes / dynamicAttributes
+    vfsiitemmodel now use fsoAttributes by default to faster display on extfs for examples
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 8 17:28:21 2011 +0000
+
+    Extfs attributes block_pointer now is a dynamic attributes using attributesHandler for faster implem
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Feb 8 17:36:17 2011 +0100
+
+    extfs
+    * remove a lagging part
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Feb 8 17:32:11 2011 +0100
+
+    Outsource build OK on Win.
+    Adds API_DATATYPE_VERSION in top level CMakeLists.txt.
+    Also in top level CMakeLists.txt adds pyuic4.bat to resource compiler check, .bat suffix was not checked.
+    Year rise in COPYRIGHT top level file.
+    Re-adds magic directory in api ; solves compilation problem on VS building magic C-Python bindings with C++ sources in same CMakeLists.txt.
+    Revert magic.mgc in this directory.
+    Modifies api/include/variant.hpp ; *_instance singleton ; strange VS linker behavior.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 8 14:38:47 2011 +0000
+
+    * reactivate menu for modules
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Tue Feb 8 15:07:26 2011 +0100
+
+    Add layout manager
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 8 13:33:32 2011 +0000
+
+    Status: WIP
+    
+    * changes taskmanager to test local module
+    * res added in fso.hpp --> std::map<std::string, Variant*> aka VMap in Python
+    * libtypes now support Variant([...], type) which results in a Variant(std::list<Variant*>)
+    * dialog reflects changes of arguments
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 8 10:32:27 2011 +0000
+
+    * minor changes in ui/gui/widget/modules.py to work properly
+    * comment of not compatible modules in modules/CMakeLists.txt
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 8 11:53:59 2011 +0000
+
+    add selectAttrs
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 8 11:53:27 2011 +0000
+
+    add ui_selectattrs in CMakeLists.txt
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Feb 8 11:03:24 2011 +0100
+
+    ui file
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Feb 8 10:39:22 2011 +0100
+
+    vfsitemmodel
+    * add the ui file
+    * add a pop-up to display the attributes
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Tue Feb 8 10:31:50 2011 +0100
+
+    vfs model
+    * modify vfsitemmodel so it can use the new attributes' system.
+    * Problem of performances
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Feb 8 00:08:34 2011 +0000
+
+    * Status: almost done
+    ** rebase on origin/master
+    ** conflicts fixes
+    ** added config and arguments wrappers with PyObject
+    ** added Variant ctor for PyObject + typeId
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Feb 7 15:12:39 2011 +0000
+
+    fix args in taskmanager and processus for single modules
+
+Author: fba <fba@digital-forensic.org>
+Date:   Sun Feb 6 16:21:50 2011 +0100
+
+    * defines module configuration
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 4 18:54:12 2011 +0000
+
+    Status: WIP
+    
+    * implementing last part arguments:
+    ** examples provided in libtypestest.py
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Feb 4 11:10:32 2011 +0000
+
+    Status: WIP
+    
+    All comparison operators implemented:
+    * Variant compared to Variant
+    * Variant compared to PyObject
+    ** operators > < >= and <= between Variant and PyObject implemented
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Thu Feb 3 19:45:07 2011 +0000
+
+    Status: WIP
+    
+    * all comparison operators implemented !!!
+    * Need to do advanced tests (c++ side not yet done)
+
+Author: fba <fba@digital-forensic.org>
+Date:   Thu Feb 3 01:18:16 2011 +0100
+
+    
+    * testing compile on 64 bits architecture
+    ** API and local compile fine
+    
+    * set SWIGDWORDSIZE64 in CMAKE_SWIG_FLAGS when 64 bits architecture
+    ** stdint.i needs this definition to correclty handle [u]int64_t type
+    *** libvfs.i no longer needs ifdef 64_BITS to correctly handle list<int64_t>
+    ** libtypes.i changes swig function call if setted
+    ** libvfs.i no uses this flags for generating appropriate getNodeFromPointer method.
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Wed Feb 2 19:26:00 2011 +0000
+
+    
+    * Variant::to*() implemented and 5 other added
+    * Variant::operator==(Variant*) almost done
+    * Variant::convert() refactored: based on Variant::to*
+    ** handles every possibility. Before, types had to be the same
+
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jan 31 18:54:34 2011 +0000
+
+    * overload of Variant::operator== in progress
+    * variant.hpp --> templated operator==(T val)
+    * libtypes.i --> extend Variant::operator==(PyObject *)
+    ** call to Variant_operator_Se__Se_ when PyList. Otherwise, call the templated operator with PyObject* as val. (ugly hack, I know ;)
+    * libtypes.i --> overload of std::list<Variant*>::operator==(PyOject* obj) working
+    
+    Other operators overloading will be fast to develop since based on the same basis as the == operator
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Jan 28 19:39:43 2011 +0000
+
+    
+    * implementing operator on Variant and other tricky features...
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Mon Jan 24 18:21:09 2011 +0000
+
+    EXPERIMENTAL
+    
+    API compiles fine and tests can be launched:
+    
+    Argument class:
+    * all options concerning the argument (base type (string, uint64, ...) input type (list or single), requirement (optional/required) and params type
+    (fixed/custom)) are used as flags (Argument::__flags). They can be setted through setFlags(uint16_t) and getted with flags() methods
+    * setter and getter concerning each flag are implemented
+    * libvfs.i and libtypes.i have been cleaned (uncesseary %include)
+    * modified .hpp files have been cleaned and some useless #include removed
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Jan 21 19:03:38 2011 +0000
+
+    * Only the API can be compiled and tested
+    
+    * Refactoring of some parts of the API:
+    ** fso has now (as before ;) its own files fso.hpp and fso.cpp
+    ** fdmanager, filemapping have their own files too (code is easier to read and to maintain)
+    ** DEventHandler has been renamed to eventhandler and moved in api/events
+    ** all other modified files in api/vfs reflect previous changes
+    
+    * fso::start and mfso::start no longer take Arguments as parameters but std::map<std::string, Variant*>
+    
+    * event enum is now directly in Event struct which has been renamend to event...
+    * event struct is now fully Variant compliant ;)
+    
+    that's all folks !
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Tue Jan 18 11:54:40 2011 +0000
+
+    * Update of API to reflect changes of API based on Variant
+    * Update of console to reflect same changes
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 19:33:01 2011 +0000
+
+    add the file to the CMakeLists
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 19:29:36 2011 +0000
+
+    Split node.cpp in three file filemapping.cpp node.cpp and vlink.cpp
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 16:56:00 2011 +0000
+
+    datatype manager modified for node.dataType
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 16:54:38 2011 +0000
+
+    node.dataType no return a map with generator name and type
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Feb 4 16:39:47 2011 +0100
+
+    NTFS infinite loop fix. Appears for small directory with an INDEX_ROOT outside main MFT entry (in ATTRIBUTE_LIST) without INDEX_ALLOCATION.
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Feb 4 16:16:40 2011 +0100
+
+    add N / A if attributes are empty in the QTableView
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 14:35:53 2011 +0000
+
+    add attributesNames -> return all the attributes names containe in a map recursivly
+    add ctags to CMakeList ( make tags )
+    remove SIP compatiblity check in CMakeLists
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Feb 4 14:36:43 2011 +0100
+
+    gui
+    * minor changes
+    * fix in Node.cpp
+
+Author: sja <sja@digital-forensic.org>
+Date:   Fri Feb 4 13:21:04 2011 +0000
+
+    add Ctags support in CMakeList (just do make tags), could be improved for different versions (etags, cscope, ...)
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Fri Feb 4 13:00:41 2011 +0100
+
+    gui
+    * re-implement sort() in vfsitemmodel
+    * implement (can)fetchMore in vfsitemmodel
+    * the 2 previous points were developed to avoid the GUI freewing while loading content of huge directories
+    * WARNING : for now, content can only be sorted by 'name' and 'size', more to come...
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Thu Feb 3 11:05:25 2011 +0100
+
+    gui
+    * improve performances when sorting data in views
+    * add fetchMore in VfsItemModel
+    * add a model for the tree view of the VFS
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Feb 2 13:41:34 2011 +0000
+
+    Start of new post process method
+
+Author: sja <sja@digital-forensic.org>
+Date:   Tue Feb 1 12:45:13 2011 +0000
+
+    Fix double click on results Processus Graphical Widget doesn't have mainWindow set in __init__
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 18:31:11 2011 +0100
+
+    Bugfix : * Avoid segfault when create a new category
+             * convert to Utf8 the name of the added category, (avoid unicode error)
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 18:22:26 2011 +0100
+
+    Check if maximizemode is activated and disable it when open a new dockwidget
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 18:07:47 2011 +0100
+
+    Disable some actions when maximize is activated
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 17:29:30 2011 +0100
+
+    * Change action name for open As new tab
+    * Change device.py : bugfix load of unicode
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 31 16:58:07 2011 +0100
+
+    Drop by previous merge, re-add:
+    - Node browser icon size translatable
+    - Translation for some attributes in Property table
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 16:33:17 2011 +0100
+
+    New add device dialog
+    * Translate device dialog
+    * Remove old table view
+
+Author: sja <sja@digital-forensic.org>
+Date:   Mon Jan 31 15:23:44 2011 +0000
+
+        Add Node::attributesByType
+        Add Node::attributesByName
+        Add new modules category metadata
+        Add new meta data modules exif that generates exif metadata as node attributes dynamicly
+        modules ported to new attributes system
+        change mime-type tag for ntfs and extfs so it can be autodetected
+        refactor modules for the new new attributes system
+        changed vfsitemmodel so it doesn't call old attributes times method (just commented must be changed)
+        add typedef Attributes std::map<std::string, Variant* > to facilitate portage
+        change setIconSize to setGridIconSize
+        Data type handler now cache file type to use less memory
+        Fix there was a wrong mime-type for fat & ntfs that's why the module can't autoload when double click on the node
+        Add compatibleModule
+        node icon as virtual
+        not use sortFilterProxyModel anymore and use batch mode for thumbnails
+        Change nodebrowser so the left tree made appear node without children but with setDir() (display file system directories in left tree)
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 31 14:25:49 2011 +0100
+
+    Everything is translated for french language, need to update de, nl and es.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 31 13:42:44 2011 +0100
+
+    Removes hidden texts in extractor dialog, used only for translation, translatable texts back again in extractor.py file.
+
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 13:34:41 2011 +0100
+
+    change splash screen image
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 31 13:22:49 2011 +0100
+
+    Removes ugly hidden labels in propertytabel, used only for translation, translatable text back again in .py file.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 12:50:05 2011 +0100
+
+    * restraint qpushbutton size in nodeviewbox
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 12:41:18 2011 +0100
+
+    Nodeviewbox : * Remove "None" text on some plateform
+    About : * Change pushbutton to qlabel with pixmap
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 12:09:32 2011 +0100
+
+    Dockwidget icons : refresh tabbars when reopen closed single dockwidgets
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 12:00:32 2011 +0100
+
+    IDE : * Connect actions into IDE menu in mainwindow
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Mon Jan 31 11:27:47 2011 +0100
+
+    IDE bugfix : * add import Utils (menutags) (remove by previous merge ?)
+                 * Open file : replace first argument by self.mainWindow (old : self.parent doesn't exists)
+    Interpreter bugfix : * Add interpreter.ui in ressource CMakeList.txt
+    
+    Menu help : * Change about names actions
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Jan 28 21:00:24 2011 +0100
+
+    Makes VFSItemModel hot-translatable.
+    Makes all IDE hot-translatable.
+    Creates ui files for ide main view and dialog.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Fri Jan 28 18:06:08 2011 +0100
+
+    Removes internal border in dockWidgers like nodeBrowser, IDE, hexviewer.
+    Fix for unique dockwidget to be really uniq and to increment title of widget wich can be opened many times.
+    Removes IDE actions, it will be dynamically added once IDE designed with Qt designer.
+    Commit .ts files ; with old string to provide guesses in Qt linguist.
+    
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Fri Jan 28 16:03:09 2011 +0100
+
+    IDE :
+    * Centralize actions in ide.py
+    * Remove QScintilla dependency and rewrite of editor.py
+    * write of python syntax highlighting
+    * Add comment and uncomment actions in editor
+    * Add the possibility to create empty script
+    * Change ide wizard and complete some script informations
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Jan 27 21:29:11 2011 +0100
+
+    Qt designer ui file for bookmark adding dialog
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Jan 27 20:30:43 2011 +0100
+
+    Qt designer ui file for extract dialog.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Jan 27 19:14:58 2011 +0100
+
+    Qt designer file for propertytable.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Jan 27 17:49:49 2011 +0100
+
+    Removes no more used gui Python files.
+    Configuration singleton saves language if provided from command line.
+    Creates .ui files for :
+     - node browser
+     - node view box
+     - apply module
+     - python interpreter
+     - about
+     - evidence dialog
+    
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jan 26 19:00:19 2011 +0100
+
+    minor; fix new ui files not add in ui/gui/i18n/dff.pro and ui/gui/ressources/CMakeLists.txt
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jan 26 18:54:43 2011 +0100
+
+    UI file for nodebrowser and nodeviewbox.
+    
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 26 17:40:34 2011 +0100
+
+    Add icon to errors, env & output
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 26 17:07:02 2011 +0100
+
+    add new icon ressources and set icon to module widget
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jan 26 16:35:15 2011 +0100
+
+    Use QString instead of str for better unicode comparison
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jan 26 16:15:58 2011 +0100
+
+    minor: use new action for toolbar in mainwindow
+
+Author: cma <cma@digital-forensic.org>
+Date:   Wed Jan 26 15:59:55 2011 +0100
+
+    Creates a resources directory in ui/gui , to place .ui files in.
+    Moves icons and gui.qrc in ui/gui/resources directory.
+    Generated code from .ui files can easily import generated gui_qrc with a common resources directory.
+    
+    Transform env, taskmanager, modules and shell to be translated on the fly.
+    
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 26 14:58:20 2011 +0100
+
+    Add dockwidget icon system
+    * Add it manually in the widget with setWindowIcon()
+    * Or add it with qt designer
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Jan 25 16:33:26 2011 +0100
+
+    Adds a Edit/Preferences menu, providing hot-language change of GUI.
+    Creates mainwindow.ui to facilitate design and translation.
+    Several modifications in mainwindow.py ; interface is not usable ! Toolbar, shell, IDE and dynamic modules have are not deployed.
+    
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Tue Jan 25 16:11:43 2011 +0100
+
+    rename stdio widgets
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Tue Jan 25 15:57:52 2011 +0100
+
+    * new dockwidget system
+    ** Add maximize
+    ** add Fullscreen mode
+    ** Remove centralwidget and cut code as widgets
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 24 17:45:43 2011 +0100
+
+    Add Patch from Pablo J. Rogina:
+    [PATCH] Proof of concept to use Qt Designer and .ui files for GUI
+    Using Qt Designer to create .ui files will allow DFF to have a graphical way to design GUI components
+    
+    Also:
+    Delete of api/gui/widget/selectdevices.py
+    In top level CMakeLists.txt:
+     - Adds a new check for pyuic4.
+     - Creates a new macro to convert XML ui files to Python files only in build dir.
+    
+    Usage of .ui files enables fast translation and graphical preview of what is to be translated using Qt linguist tool.
+    
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 19 14:25:58 2011 +0100
+
+    rename parser to hash
+
+Author: sja <sja@digital-forensic.org>
+Date:   Wed Jan 19 13:24:10 2011 +0000
+
+    Fix there was a wrong mime-type for fat & ntfs that's why the module can't autoload when double click on the node
+
+Author: cma <cma@digital-forensic.org>
+Date:   Tue Jan 18 12:24:30 2011 +0100
+
+    From: Pablo J. Rogina <pablojr@gmail.com>
+    Date: Mon, 17 Jan 2011 14:45:07 -0300
+    Subject: [PATCH] Updated NodeViewBox to make it translatable
+    
+    Added missing tr() calls along with adding Python files into the list of translatable files and updated Spanish .ts file
+    
+    Thanks to Pablo J. Rogina for this patch. Also update:
+    - French .ts file for new translatable files.
+    - Other .ts files to be updated : Deutsch and Dutch
+    
+
+Author: cma <cma@digital-forensic.org>
+Date:   Mon Jan 17 15:17:29 2011 +0100
+
+    Thanks to Bram Mooij : add support for Dutch language. Use it with -l nl when launching DFF.
+    
+
+Author: Frederic Baguelin <fba@digital-forensic.org>
+Date:   Fri Jan 14 17:30:28 2011 +0000
+
+    it is added as before.
+
+Author: cma <cma@digital-forensic.org>
+Date:   Thu Jan 13 18:54:26 2011 +0100
+
+    Add Deutsch translation in Dff_de.ts. Thanks to Dennis Schreiber.
+    Also modify Dff_fr.ts for new translatable strings.
+    Others .ts modified because of line number change in sources files.
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 12 11:34:01 2011 +0100
+
+    open as new tab, QAction commit
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Wed Jan 12 11:26:47 2011 +0100
+
+    Issue #87 : Add new action in right click menu : open as new tab
+
+Author: mcleodz <mcleodz@wisky.(none)>
+Date:   Tue Jan 11 17:20:05 2011 +0100
+
+    close issue #85 : Disable previous and next action when picture viewer load only one image
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jan 10 16:08:57 2011 +0100
+
+    extfs
+    * minor changes
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jan 10 14:16:56 2011 +0100
+
+    extfs
+    * uses boyer-moore algorthm to search for the superblock signature if users use the --SB_check option
+
+Author: rbe <rbe@digital-forensic.org>
+Date:   Mon Jan 10 11:22:42 2011 +0100
+
+    extfs
+    * rename --run option in --parse_fs (set to True by default)
+
