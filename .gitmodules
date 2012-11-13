@@ -1,9 +1,9 @@
 [submodule "dff/api"]
 	path = dff/api
-	url = git@git.digital-forensic.org:api
+	url = git://git.digital-forensic.org/api
 [submodule "dff/ui"]
 	path = dff/ui
-	url = git@git.digital-forensic.org:ui
+	url = git://git.digital-forensic.org/ui
 [submodule "dff/modules"]
 	path = dff/modules
-	url = git@git.digital-forensic.org:modules
+	url = git://git.digital-forensic.org/modules
