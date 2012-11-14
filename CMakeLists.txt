@@ -111,6 +111,14 @@ find_package(PFF)
 find_package(TRE)
 find_package(FFmpeg)
 
+if (UNIX)
+  find_package(UDEV)
+  if (UDEV_FOUND)
+    SET(HAVE_UDEV TRUE)
+    message(STATUS "udev include and libraries: FOUND")
+  endif (UDEV_FOUND)
+endif(UNIX)
+
 
 if (FFMPEG_FOUND)
   message(STATUS "FFmpeg includes and libraries found video module: ENABLED")
@@ -179,10 +187,6 @@ if(NOT HAVE_FUSE)
   message(STATUS "(Optional) fuse library not found; file system module 'fuse' will not be built")
 endif(NOT HAVE_FUSE)
 
-find_library(HAVE_UDEV NAMES udev)
-if(NOT HAVE_UDEV)
-  message(STATUS "(Optional) udev library not found; device connector 'udev' will not be bult.We try to use dbus and HAL.")
-endif(NOT HAVE_UDEV)
 
 IF(WIN32)
   SET(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DWIN32 -DSWIGWIN)
