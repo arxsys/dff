@@ -299,31 +299,6 @@ else(PYTHON_QT4_RCC)
   message(SEND_ERROR "Python Qt4 resource compiler not found.")
 endif(PYTHON_QT4_RCC)
 
-option(ENABLE_INDEXER "Compile and enable Lucene indexing engine" OFF)
-if (ENABLE_INDEXER)
-   ## CLucene indexer library check
-   find_library(CLUCENE_LIBRARY NAMES clucene)
-   if(CLUCENE_LIBRARY)
-	message(STATUS "CLucene indexing library found: ${CLUCENE_LIBRARY}")
-   else(CLUCENE_LIBRARY)
-	message(STATUS "CLucene indexing library not found.")
-   endif(CLUCENE_LIBRARY)
-   # Check for header, usually sits in /usr/lib on linux, strange !
-   get_directory_property(cmake_include_directories INCLUDE_DIRECTORIES)
-   find_path(CLUCENE_CONFIG_INCLUDE_PATH NAMES clucene-config.h ${cmake_include_directories})
-   if(CLUCENE_CONFIG_INCLUDE_PATH)
-	message(STATUS "CLucene indexing library config header file found in common include directories.")
-   else(CLUCENE_CONFIG_INCLUDE_PATH)
-	find_path(CLUCENE_CONFIG_INCLUDE_PATH NAMES CLucene/clucene-config.h PATHS /usr/lib /usr/local/lib)
-    	if(CLUCENE_CONFIG_INCLUDE_PATH)
-		message(STATUS "CLucene indexing library config header file found in: ${CLUCENE_CONFIG_INCLUDE_PATH}/CLucene")
-	else(CLUCENE_CONFIG_INCLUDE_PATH)
-		message(STATUS "CLucene indexing library config header file not found.")
-  	endif(CLUCENE_CONFIG_INCLUDE_PATH)
-   endif(CLUCENE_CONFIG_INCLUDE_PATH)
-endif(ENABLE_INDEXER)
-
-
 # Backing up original install prefix, some files have to sit elsewhere than python path, see at the end of this file.
 SET(CMAKE_INSTALL_ORIG_PREFIX ${CMAKE_INSTALL_PREFIX})
 # Install prefix used by Python installer.
