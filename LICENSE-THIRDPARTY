@@ -1,0 +1,177 @@
+Copyright and license below covers the images in directory ui/gui/icons/
+************************************************************************
+
+TITLE:	Crystal Project Icons
+AUTHOR:	Everaldo Coelho
+SITE:	http://www.everaldo.com
+CONTACT: everaldo@everaldo.com
+LICENSE: LGPL
+
+Staff:
+Ingolfur Haraldsson (ingo@linpire.com)
+Luiz Claudio dos Santos (luiz@yellowicon.com)
+Rhandros Dembicki (rhandros@yellowicon.com)
+Paulo andre (paulo@yellowicon.com)
+Edson Farias (edson@yellowicon.com)
+Andre Souza (andre@yellowicon.com)
+
+One of those have been modified to fit Digital Forensics Framework requirements
+
+Jeremy MOUNIER (jmo@arxsys.fr)
+
+
+Copyright and license below covers the scripts in directory cmake_modules/
+**************************************************************************
+
+Files FindPyQt.py, FindLibPython.py, SIPMacros.cmake, PythonMacros.cmake,
+FindSIP.cmake, FindSIP.py and FindPythonLibrary.cmake:
+
+Copyright (c) 2007, Simon Edwards <simon@simonzone.com>
+Redistribution and use is allowed according to the terms of the BSD license.
+For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+
+
+File FindPyQt4.cmake:
+
+Copyright (c) 2007-2008, Simon Edwards <simon@simonzone.com>
+Redistribution and use is allowed according to the terms of the BSD license.
+For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+
+
+File PythonCompile.py:
+
+By Simon Edwards <simon@simonzone.com>
+This file is in the public domain.
+
+
+Copyright and license below covers the script file
+modules/metadata/metaexif/EXIF.py
+**************************************************
+
+Copyright (c) 2002-2007 Gene Cash All rights reserved
+Copyright (c) 2007-2008 Ianaré Sévi All rights reserved
+Redistribution and use is allowed according to the terms of the BSD license.
+
+# Copyright (C) 2007,2008 Volatile Systems
+
+Copyright and license below covers the scripts in directory
+modules/mem/Volatility-1.3_Beta/
+***********************************************************
+
+File vutils.py, vtypes.py, vmodules.py, forensics/win32/datetime.py,
+forensics/win32/handles.py, forensics/win32/info.py,
+forensics/win32/network.py, forensics/win32/tasks.py and forensics/object.py:
+
+Copyright (C) 2007,2008 Volatile Systems
+Copyright (C) 2007 Komoku, Inc.
+
+
+File vsyms.py, forensics/win32/vad.py, forensics/win32/modules.py,
+forensics/symbols.py:
+
+Copyright (C) 2007 Komoku, Inc.
+
+
+File forensics/win32/crashdump.py, forensics/win32/executable.py:
+
+Copyright (c) 2007,2008 Volatile Systems
+Copyright (c) 2008 Brendan Dolan-Gavitt <bdolangavitt@wesleyan.edu>
+
+
+File forensics/win32/registry.py, forensics/win32/meta_info.py:
+Copyright (C) 2007,2008 Volatile Systems
+
+
+File memory_objects/Windows/xp_sp2.py:
+Copyright (c) 2008 Volatile Systems
+Copyright (c) 2008 Brendan Dolan-Gavitt <bdolangavitt@wesleyan.edu>
+
+
+File forensics/win32/xpress.py, forensics/win32/hiber_addrspace.py:
+Copyright (c) 2008 Volatile Systems
+Copyright (c) 2008 Brendan Dolan-Gavitt <bdolangavitt@wesleyan.edu>
+Code found inspired by the work of Matthieu Suiche.
+
+
+File forensics/win32/scan2.py, forensics/registry.py:
+Copyright (C) 2007,2008 Volatile Systems
+Copyright 2004: Commonwealth of Australia.
+Derived from source in PyFlag developed by 
+Michael Cohen <scudette@users.sourceforge.net> and
+David Collett <daveco@users.sourceforge.net>
+
+
+File forensics/win32/scan.py:
+Copyright (C) 2007,2008 Volatile Systems
+Source code in this file was inspired by the work of Andreas Schuster and
+ptfinder.
+
+
+File forensics/win32/crash_addrspace.py:
+Copyright (C) 2007,2008 Volatile Systems
+Copyright (C) 2005,2006,2007 4tphi Research
+Author: {npetroni,awalters}@4tphi.net (Nick Petroni and AAron Walters)
+
+
+File forensics/object2.py:
+Copyright (C) 2007,2008 Volatile Systems
+Copyright (C) 2005,2006 4tphi Research
+Author: {npetroni,awalters}@4tphi.net (Nick Petroni and AAron Walters)
+
+
+File forensics/addrspace.py, forensics/x86.py:
+Copyright (C) 2007,2008 Volatile Systems
+Copyright (C) 2004,2005,2006 4tphi Research
+Author: {npetroni,awalters}@4tphi.net (Nick Petroni and AAron Walters)
+
+
+File forensics/commands.py, memory_plugins/example3.py,
+memory_plugins/example2.py, memory_plugins/example1.py:
+Copyright (C) 2008 Volatile Systems
+
+
+31 files listed above are licensed:
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or (at
+your option) any later version.
+
+
+File thirdparty/progressbar.py:
+Copyright (c) 2005 Nilton Volpato
+
+This library is free software; you can redistribute it and/or
+modify it under the terms of the GNU Lesser General Public
+License as published by the Free Software Foundation; either
+version 2.1 of the License, or (at your option) any later version.
+
+
+Copyright and license below covers the source file api/include/wstdint.h
+************************************************************************
+
+Copyright (c) 2006-2008 Alexander Chemeris
+Redistribution and use is allowed according to the terms of the BSD license.
+
+
+Copyright and license below covers the source file api/include/wstdint.i
+************************************************************************
+
+SWIG is free software: you can redistribute it and/or modify it
+under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version. See the LICENSE-GPL file for
+the full terms of the GNU General Public license version 3.
+
+
+Copyright and license below covers the sources files api/magic/py_magic.c,
+./api/magic/py_magic.h
+**************************************************************************
+
+Copyright (C) Brett Funderburg, Deepfile Corp. Austin, TX, US 2003
+Redistribution and use is allowed according to the terms of the BSD license.
+
+Copyright and license below covers the source file api/magic/magic.h
+********************************************************************
+
+Copyright (c) Christos Zoulas 2003.
+Redistribution and use is allowed according to the terms of the BSD license.
