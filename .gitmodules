@@ -10,3 +10,6 @@
 [submodule "cmake_modules"]
 	path = cmake_modules
 	url = git://git.digital-forensic.org/cmake_modules
+[submodule "doc"]
+	path = doc
+	url = git://git.digital-forensic.org/doc
