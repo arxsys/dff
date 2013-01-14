@@ -18,4 +18,4 @@ add_subdirectory(api)
 add_subdirectory(modules)
 add_subdirectory(ui)
 
-install_file(dff_srcs __init__.py)
+install_file(__init__.py)

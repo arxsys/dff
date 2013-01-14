@@ -102,11 +102,11 @@ if (${SWIGOK})
 endif (${SWIGOK})
 
 if (ICU_DEP_PATH)
-	if (WIN32)
-		set(ICU_INCLUDE_PATH "${ICU_DEP_PATH}/include")
-		set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib")
-		set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin")
-	endif (WIN32)
+  if (WIN32)
+    set(ICU_INCLUDE_PATH "${ICU_DEP_PATH}/include")
+    set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib")
+    set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin")
+  endif (WIN32)
 endif (ICU_DEP_PATH)
 
 find_package(ICU REQUIRED)
@@ -310,6 +310,8 @@ SET(CMAKE_INSTALL_ORIG_PREFIX ${CMAKE_INSTALL_PREFIX})
 # Install prefix used by Python installer.
 SET(CMAKE_INSTALL_PREFIX ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}/)
 
+#message("${CMAKE_INSTALL_ORIG_PREFIX}")
+
 ## Main purpose of this macro if to copy Python files at install.
 # It also deploys .py files in build directory if there is one.
 LIST(APPEND PYC_FILES "")
@@ -339,7 +341,7 @@ endmacro(log text)
 macro(DFF_CPP_CONTEXT_INIT library_name)
   INCLUDE_DIRECTORIES(../include)
 
-  list(APPEND arguments CPP_FILES SWIG_FILE LINK_LIBRARIES SWIG_FLAGS DEFINITIONS PYFILES INCLUDE_DIRS INCLUDE_FILES)
+  list(APPEND arguments CPP_FILES SWIG_FILE LINK_LIBRARIES SWIG_FLAGS DEFINITIONS EXTRA_FILES INCLUDE_DIRS INCLUDE_FILES NO_SWIG_LIB_PREFIX)
   set(arglist "${ARGN}")
   foreach(argument ${arguments})
     list(REMOVE_ITEM arguments ${argument})
@@ -356,8 +358,8 @@ macro(DFF_CPP_CONTEXT_INIT library_name)
       string(SUBSTRING "${arglist}" ${start_pos} ${length} extracted)
       string(REPLACE "${extracted}" "" arglist "${arglist}")
       string(LENGTH "${argument}" val_start)
-      math(EXPR val_start "${val_start} + 1")
       string(SUBSTRING "${extracted}" ${val_start} -1 __${argument}__)
+      string(STRIP "${__${argument}__}" __${argument}__)
       log("Values for ${argument} : ${__${argument}__}")
     else ()
       list(REMOVE_ITEM arguments ${argument})
@@ -388,15 +390,19 @@ macro(DFF_COMPILE_HEAD)
   include_directories(${CMAKE_CURRENT_SOURCE_DIR})
   include_directories(${CMAKE_HOME_DIRECTORY}/dff/api/include)
 
-  add_definitions(${__DEFINITIONS__})
-
-  set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} ${__SWIG_FLAGS__})
-
   if (NOT "${__INCLUDE_DIRS__}" STREQUAL "")
     include_directories("${__INCLUDE_DIRS__}")
   endif ()
   if (NOT "${__INCLUDE__}" STREQUAL "")
     include("${__INCLUDE__}")
+  endif()
+
+  if (NOT "${__DEFINITIONS__}" STREQUAL "")
+    add_definitions(${__DEFINITIONS__})
+  endif()
+
+  if (NOT "${__SWIG_FLAGS__}" STREQUAL "")
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} ${__SWIG_FLAGS__})
   endif()
 endmacro()
 
@@ -412,7 +418,7 @@ endmacro()
 #  - LINK_LIBRARIES followed by needed library
 #  - SWIG_FLAGS followed by needed flags
 #  - DEFINITIONS followed by needed definitions
-#  - PYFILES followed by python files
+#  - EXTRA_FILES followed by extra files you need to install
 #  - INCLUDE_DIRS followed by absolute path to include directories
 #    By default following include dirs are managed 
 #      * ${CMAKE_CURRENT_SOURCE_DIR}
@@ -430,7 +436,7 @@ endmacro()
 #   LINK_LIBRARIES bar
 #   DEFINITIONS -D__STDC_LIMIT_MACROS
 #   SWIG_FLAGS -threads -fvirtual -fastdispatch
-#   PYFILES __init__.py
+#   EXTRA_FILES __init__.py
 #   )
 macro(DFF_CPP_API library_name)
   # Setting default context to compile cpp / swig libraries
@@ -451,27 +457,32 @@ macro(DFF_CPP_API library_name)
   endif ()
 
   # Python's binding library generation
+  if (${__NO_SWIG_LIB_PREFIX__})
+    set(swig_lib_name "${library_name}")
+  else()
+    set(swig_lib_name "lib${library_name}")
+  endif()
   set_source_files_properties(${__SWIG_FILE__} PROPERTIES CPLUSPLUS ON)
-  swig_add_module(lib${library_name} python ${__SWIG_FILE__})
-  swig_link_libraries(lib${library_name} ${PYTHON_LIBRARIES} ${library_name})
+  swig_add_module(${swig_lib_name} python ${__SWIG_FILE__})
+  swig_link_libraries(${swig_lib_name} ${PYTHON_LIBRARIES} ${library_name})
   if ( CMAKE_GENERATOR MATCHES "Visual Studio")
-    vs_library_properties(${SWIG_MODULE_lib${library_name}_REAL_NAME} ".pyd")
-    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_lib${library_name}_REAL_NAME}.pyd\n")
-    install (TARGETS ${target_name} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
+    vs_library_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} ".pyd")
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${swig_lib_name}_REAL_NAME}.pyd\n")
+    install (TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
   elseif (UNIX)
-    set_target_properties(${SWIG_MODULE_lib${library_name}_REAL_NAME} PROPERTIES
+    set_target_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} PROPERTIES
       SKIP_BUILD_RPATH FALSE
       BUILD_WITH_INSTALL_RPATH FALSE
       INSTALL_RPATH "${CMAKE_INSTALL_ORIG_PREFIX}/lib/dff/"
       INSTALL_RPATH_USE_LINK_PATH TRUE
       )
-    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_lib${library_name}_REAL_NAME}.so\n")
-    install(TARGETS ${SWIG_MODULE_lib${library_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${swig_lib_name}_REAL_NAME}.so\n")
+    install(TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
   endif()
 
   # Final rules
-  install_file(${library_name} "lib${library_name}.py" ${__PYFILES__})
-  add_dependencies(${current_target} ${library_name} ${SWIG_MODULE_lib${library_name}_REAL_NAME})
+  install_file("${swig_lib_name}.py" ${__EXTRA_FILES__})
+  add_dependencies(${current_target} ${library_name} ${SWIG_MODULE_${library_name}_REAL_NAME})
 endmacro()
 
 macro(DFF_CPP_MODULE library_name)
@@ -480,19 +491,18 @@ macro(DFF_CPP_MODULE library_name)
 
   set_source_files_properties(${__SWIG_FILE__} PROPERTIES CPLUSPLUS ON)
   swig_add_module(${library_name} python ${__SWIG_FILE__} ${__CPP_FILES__})
-  swig_link_libraries(${library_name} ${PYTHON_LIBRARIES} ${__LINK_LIBRARIES__} ${__SWIG_LINK_LIBRARIES__})
+  swig_link_libraries(${library_name} ${PYTHON_LIBRARIES} ${__LINK_LIBRARIES__})
 
   if ( CMAKE_GENERATOR MATCHES "Visual Studio")
-    vs_library_properties(${SWIG_MODULE_lib${library_name}_REAL_NAME} ".pyd")
+    vs_library_properties(${SWIG_MODULE_${library_name}_REAL_NAME} ".pyd")
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.pyd\n")
     install (TARGETS ${target_name} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
   elseif (UNIX)
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.so\n")
-    install(TARGETS ${SWIG_MODULE_lib${library_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
+    install(TARGETS ${SWIG_MODULE_${library_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
   endif ( CMAKE_GENERATOR MATCHES "Visual Studio" )
 
-  #install_file(${library_name} "${library_name}.py" ${__PYFILES__})
-  install_file(${current_target} "${library_name}.py" ${__PYFILES__})
+  install_file("${library_name}.py" ${__EXTRA_FILES__})
   add_dependencies(${current_target} ${SWIG_MODULE_${library_name}_REAL_NAME})
 endmacro()
 
@@ -530,12 +540,12 @@ macro(install_rule file)
       list(APPEND pyc_list "${pyc_file}")
       set_property(GLOBAL PROPERTY PYC_FILES ${pyc_list})
     endif (${ifile} MATCHES "^.*\\.py$")
-    log("    install rule : ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${ifile}")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${ifile})
+    log("    install rule : ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath}")
+    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
   endif (NOT DEVELOP)
 endmacro()
 
-macro(install_file target_name)
+macro(install_file)
   # Create empty strings which will contain all commands for the resulting current_target
   set(cmds "")
   path_to_target()
@@ -546,7 +556,7 @@ macro(install_file target_name)
   #       pyc files during desinstallation
   #   * all mode with build_dir != src_dir
   #     - create 'copy if different' command for each .py
-  foreach(file ${ARGN})
+  foreach(file ${ARGV})
     install_rule(${file})
     if (DEDICATED_BUILD_DIR)
       #message("Copying ${CMAKE_CURRENT_SOURCE_DIR}/${file} in ${CMAKE_CURRENT_BINARY_DIR}")
@@ -559,14 +569,13 @@ macro(install_file target_name)
       endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
     endif (DEDICATED_BUILD_DIR)
   endforeach(file ${ARGN})
-  message("MAKING TARGET: ${current_target}")
   add_custom_target(${current_target} ALL ${cmds})
   set_target_properties(${current_target} PROPERTIES CREATED "true")
   get_property(created_targets GLOBAL PROPERTY CREATED_TARGETS)
   list(APPEND created_targets "${current_target}")
   set_property(GLOBAL PROPERTY CREATED_TARGETS ${created_targets})
   log("\n")
-endmacro(install_file target_name)
+endmacro(install_file)
 
 
 ## Macro to copy lib at install
@@ -1007,7 +1016,7 @@ if (WIN32)
 			icuuc48.dll
 			icudt48.dll
 		)
-	install_file(icu ${icu_dynlib})
+	install_file(${icu_dynlib})
 	if (FFMPEG_FOUND)
 		FILE(COPY ${FFMPEG_ROOT}/bin/avcodec-54.dll ${FFMPEG_ROOT}/bin/avdevice-54.dll ${FFMPEG_ROOT}/bin/avfilter-3.dll ${FFMPEG_ROOT}/bin/avformat-54.dll ${FFMPEG_ROOT}/bin/avutil-51.dll ${FFMPEG_ROOT}/bin/postproc-52.dll ${FFMPEG_ROOT}/bin/swresample-0.dll ${FFMPEG_ROOT}/bin/swscale-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
 		set (ffmpeg_dynlib
@@ -1020,7 +1029,7 @@ if (WIN32)
 			swresample-0.dll
 			swscale-2.dll
 			)
-		install_file(ffmpeg ${ffmpeg_dynlib})
+		install_file(${ffmpeg_dynlib})
 	endif (FFMPEG_FOUND)
 	if (REGLOOKUP_PATH)
 		message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
@@ -1033,7 +1042,7 @@ if (WIN32)
 			libtalloc.dll
 			pthreadGC2.dll
 			)
-		install_file(reglookup ${reglookup_files})
+		install_file(${reglookup_files})
 	else (REGLOOKUP_PATH)
 		message(STATUS "Reglookup/pyregfi path not set")
 	endif (REGLOOKUP_PATH)
