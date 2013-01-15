@@ -391,7 +391,7 @@ macro(DFF_COMPILE_HEAD)
   include_directories(${CMAKE_HOME_DIRECTORY}/dff/api/include)
 
   if (NOT "${__INCLUDE_DIRS__}" STREQUAL "")
-    include_directories("${__INCLUDE_DIRS__}")
+    include_directories(${__INCLUDE_DIRS__})
   endif ()
   if (NOT "${__INCLUDE__}" STREQUAL "")
     include("${__INCLUDE__}")
