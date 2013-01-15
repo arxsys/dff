@@ -510,7 +510,7 @@ macro(PATH_TO_TARGET)
   # Obtain relative path
   file(RELATIVE_PATH rpath ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
   # Replace all '/' with '.' resulting variable becomes current_target 
-  string(REPLACE "/" "." current_target ${rpath})
+  string(REPLACE "/" "." current_target "${rpath}")
   # From current_target, extract the parent_target
   # parent_target completion depends on all its sub current_target
   string(FIND "${current_target}" "." dot_rpos REVERSE)
