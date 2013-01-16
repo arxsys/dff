@@ -30,12 +30,8 @@ set(PFF_REQUIRED_VERSION "20120802")
 if( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
   set( HAVE_64_BIT 0 )
 else( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
-   if (WIN32)
-       SET( HAVE_64_BIT 0 )
-   else (WIN32)
-       SET(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DSWIGWORDSIZE64)
-       SET( HAVE_64_BIT 1 )
-   endif (WIN32)
+  SET(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DSWIGWORDSIZE64)
+  SET( HAVE_64_BIT 1 )
 endif( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
 
 # Set installation mode, include all items (*.py, ...) Default is development mode
@@ -103,9 +99,14 @@ endif (${SWIGOK})
 
 if (ICU_DEP_PATH)
   if (WIN32)
+    if (HAVE_64_BIT)
+      set(ICU_PATH_SUFFIX "64")
+    else()
+      set(ICU_PATH_SUFFIX "")
+    endif()
     set(ICU_INCLUDE_PATH "${ICU_DEP_PATH}/include")
-    set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib")
-    set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin")
+    set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib${ICU_PATH_SUFFIX}")
+    set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin${ICU_PATH_SUFFIX}")
   endif (WIN32)
 endif (ICU_DEP_PATH)
 
@@ -980,22 +981,6 @@ foreach(current_target ${created_targets})
   endif()
 endforeach()
 
-#get_property(deps GLOBAL PROPERTY CUSTOM_DEPENDENCIES)
-#foreach (key ${deps})
-#  get_property(_targets GLOBAL PROPERTY "${key}")
-#  string(SUBSTRING ${key} 4 -1 parent_target)
-#  log("Top level target: ${parent_target} depends on :")
-#  foreach (_target ${_targets})
-#    log("   ${_target}")
-#    check_orphaned_parent_dependencies(${_target})
-#    #message("Checking if ${parent_target} exists : ${parent_exists}")
-#    #if ("${parent_exist}" EQUAL "")
-#    #  message("${parent_target} does not exist")
-#    #else ()
-#    add_dependencies(${parent_target} ${_target})
-#    #endif()
-#  endforeach (_target ${_targets})
-#endforeach (key ${deps})
 
 log("
    ==========================================
@@ -1006,46 +991,47 @@ foreach (pyc_file ${pyc_list})
   log("${pyc_file}")
 endforeach (pyc_file ${pyc_list})
 
-check_orphaned_parent_dependencies("dff.modules.mailbox.pff")
 
+macro(filename_from_path PATH)
+  file(TO_CMAKE_PATH ${PATH} PATH)
+  string(FIND "${PATH}" "/" slash_rpos REVERSE)
+  if (slash_rpos EQUAL -1)
+    set(filename ${PATH})
+  else()
+    math(EXPR file_pos "${slash_rpos} + 1")
+    string(SUBSTRING ${PATH} ${file_pos} -1 filename)
+  endif()
+endmacro()
 
 if (WIN32)
-	#
-	FILE(COPY ${ICU_DYNLIB_PATH}/icuuc48.dll ${ICU_DYNLIB_PATH}/icudt48.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-	set (icu_dynlib
-			icuuc48.dll
-			icudt48.dll
-		)
-	install_file(${icu_dynlib})
-	if (FFMPEG_FOUND)
-		FILE(COPY ${FFMPEG_ROOT}/bin/avcodec-54.dll ${FFMPEG_ROOT}/bin/avdevice-54.dll ${FFMPEG_ROOT}/bin/avfilter-3.dll ${FFMPEG_ROOT}/bin/avformat-54.dll ${FFMPEG_ROOT}/bin/avutil-51.dll ${FFMPEG_ROOT}/bin/postproc-52.dll ${FFMPEG_ROOT}/bin/swresample-0.dll ${FFMPEG_ROOT}/bin/swscale-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-		set (ffmpeg_dynlib
-			avcodec-54.dll
-			avdevice-54.dll
-			avfilter-3.dll
-			avformat-54.dll
-			avutil-51.dll
-			postproc-52.dll
-			swresample-0.dll
-			swscale-2.dll
-			)
-		install_file(${ffmpeg_dynlib})
-	endif (FFMPEG_FOUND)
-	if (REGLOOKUP_PATH)
-		message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
-		file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
-		add_subdirectory(pyregfi)
-		file(COPY ${REGLOOKUP_PATH}/libiconv-2.dll ${REGLOOKUP_PATH}/libregfi.dll ${REGLOOKUP_PATH}/libtalloc.dll ${REGLOOKUP_PATH}/pthreadGC2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-		set(reglookup_files
-			libiconv-2.dll
-			libregfi.dll
-			libtalloc.dll
-			pthreadGC2.dll
-			)
-		install_file(${reglookup_files})
-	else (REGLOOKUP_PATH)
-		message(STATUS "Reglookup/pyregfi path not set")
-	endif (REGLOOKUP_PATH)
+  foreach (icu_dynlib ${ICU_DYN_LIBRARIES})
+    file(COPY ${icu_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+    filename_from_path(${icu_dynlib})
+    install_rule(${filename})
+  endforeach()
+
+  if (FFMPEG_FOUND)
+    file(GLOB ffmpeg_dyn_libraries ${FFMPEG_ROOT}/bin/*.dll)
+    foreach(ffmpeg_dynlib ${ffmpeg_dyn_libraries})
+      file(copy ${ffmpeg_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+      filename_from_path(${ffmpeg_dynlib})
+      install_rule(${filename})
+    endforeach()
+  endif (FFMPEG_FOUND)
+
+  if (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
+    file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory(pyregfi)
+    file(GLOB reglookup_dyn_libraries ${REGLOOKUP_PATH}/*.dll)
+    foreach(reglookup_dynlib ${reglookup_dyn_libraries})
+      file(copy ${reglookup_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+      filename_from_path(${reglookup_dynlib})
+      install_rule(${filename})
+    endforeach()
+  else (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path not set")
+  endif (REGLOOKUP_PATH)
 endif (WIN32)
 
 
