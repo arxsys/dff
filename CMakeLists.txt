@@ -91,10 +91,10 @@ ENDIF(WIN32)
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
-STRING (COMPARE LESS "${SWIG_VERSION}" "1.3.38" SWIGOK)
+STRING (COMPARE LESS "${SWIG_VERSION}" "2.0.8" SWIGOK)
 
 if (${SWIGOK})
-  MESSAGE(FATAL_ERROR "Need SWIG version >= 1.3.38 (current version is ${SWIG_VERSION})")
+  MESSAGE(FATAL_ERROR "Need SWIG version >= 2.0.8 (current version is ${SWIG_VERSION})")
 endif (${SWIGOK})
 
 if (ICU_DEP_PATH)
@@ -328,7 +328,7 @@ LIST(APPEND CREATED_TARGETS "")
 set_property(GLOBAL PROPERTY CREATED_TARGET)
 
 if (WIN32)
-  set(INSTALL_FILE_DESTINATION "")
+  set(INSTALL_FILE_DESTINATION "dff")
 elseif (UNIX)
   set(INSTALL_FILE_DESTINATION ${PYTHON_SITE_PACKAGES_PATH})
 endif (WIN32)
@@ -338,6 +338,42 @@ macro(log text)
     message(${text})
   endif (LOG_BUILD)
 endmacro(log text)
+
+macro(SPLIT_PATH_FILE_EXTENSION item)
+  file(TO_CMAKE_PATH ${item} path)
+  string(FIND "${path}" "/" slash_rpos REVERSE)
+  if (slash_rpos EQUAL -1)
+    set(__FILE__ ${path})
+    set(__PATH__ "")
+  else()
+    math(EXPR slash_rpos "${slash_rpos} + 1")
+    string(SUBSTRING ${path} ${slash_rpos} -1 __FILE__)
+    string(SUBSTRING ${path} 0 ${slash_rpos} __PATH__)
+  endif()
+  string(FIND "${__FILE__}" "." dot_rpos REVERSE)
+  if (dot_rpos EQUAL -1)
+    set(__EXTENSION__ "")
+  else()
+    math(EXPR dot_rpos "${dot_rpos} + 1")
+    string(SUBSTRING ${__FILE__} ${dot_rpos} -1 __EXTENSION__)
+  endif()
+endmacro()
+
+#split_path_file_extension("/usr/lib/pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("/usr\\\\lib\\\\pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("/usr/lib/pouet")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("pouet")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
 
 macro(DFF_CPP_CONTEXT_INIT library_name)
   INCLUDE_DIRECTORIES(../include)
@@ -449,7 +485,7 @@ macro(DFF_CPP_API library_name)
   if ( CMAKE_GENERATOR MATCHES "Visual Studio")
     vs_library_properties(${library_name} ".dll")
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${library_name}.dll\n")
-    install(TARGETS ${library_name} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
+    install(TARGETS ${library_name} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
   elseif (UNIX)
     set_target_properties(${library_name} PROPERTIES
       LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../"
@@ -469,7 +505,7 @@ macro(DFF_CPP_API library_name)
   if ( CMAKE_GENERATOR MATCHES "Visual Studio")
     vs_library_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} ".pyd")
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${swig_lib_name}_REAL_NAME}.pyd\n")
-    install (TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
+    install (TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
   elseif (UNIX)
     set_target_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} PROPERTIES
       SKIP_BUILD_RPATH FALSE
@@ -497,7 +533,7 @@ macro(DFF_CPP_MODULE library_name)
   if ( CMAKE_GENERATOR MATCHES "Visual Studio")
     vs_library_properties(${SWIG_MODULE_${library_name}_REAL_NAME} ".pyd")
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.pyd\n")
-    install (TARGETS ${target_name} DESTINATION /${CMAKE_PROJECT_NAME}/${rpath})
+    install (TARGETS ${SWIG_MODULE_${library_name}_REAL_NAME} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
   elseif (UNIX)
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.so\n")
     install(TARGETS ${SWIG_MODULE_${library_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
@@ -528,10 +564,14 @@ endmacro()
 
 macro(install_rule file)
   if (NOT DEVELOP)
+	split_path_file_extension(${file})
+	if (NOT ${__PATH__} STREQUAL "")
+		file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	endif()
     if("${rpath}" STREQUAL "")
-      set(ifile "${file}")
+      set(ifile "${__FILE__}")
     else("${rpath}" STREQUAL "")
-      set(ifile "${rpath}/${file}")
+      set(ifile "${rpath}/${__FILE__}")
     endif("${rpath}" STREQUAL "")
     file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${ifile}\n")
     if (${ifile} MATCHES "^.*\\.py$")
@@ -541,8 +581,8 @@ macro(install_rule file)
       list(APPEND pyc_list "${pyc_file}")
       set_property(GLOBAL PROPERTY PYC_FILES ${pyc_list})
     endif (${ifile} MATCHES "^.*\\.py$")
-    log("    install rule : ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath}")
-    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
+	log("    install rule : ${CMAKE_CURRENT_BINARY_DIR}/${__FILE__} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath}")
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${__FILE__} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
   endif (NOT DEVELOP)
 endmacro()
 
@@ -717,17 +757,29 @@ IF(WIN32 AND NOT UNIX)
     !include \\\"x64.nsh\\\"
 	Var /GLOBAL pypath
 	Var /GLOBAL pyqtpath
-
+	Var /GLOBAL py_hkcu_path
+	Var /GLOBAL py_hklm_path
+	
 	StrCpy \\\$pypath \\\"\\\"
+	StrCpy \\\$py_hkcu_path \\\"\\\"
+	StrCpy \\\$py_hklm_path \\\"\\\"
 	StrCpy \\\$pyqtpath \\\"\\\"
+	
+	ReadRegStr \\\$py_hkcu_path HKCU \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${If} \\\${RunningX64}
-		ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${Else}
-		ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${EndIf}
-	")
+	\\\${If} \\\$py_hklm_path != \\\"\\\"
+		StrCpy \\\$pypath \\\$py_hklm_path
+	\\\${Else}
+		StrCpy \\\$pypath \\\$py_hkcu_path
+	\\\${EndIf}
+	"
+	)
 	
   SET(NSIS_GET_64_BITS_PATHES
 	"
@@ -738,7 +790,8 @@ IF(WIN32 AND NOT UNIX)
 	StrCpy \\\$pyqtpath \\\"\\\"
 	ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\" \\\"\\\"
 	ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
-	")
+	"
+	)
 
   SET(NSIS_DEFAULT_LABELS
     "
@@ -776,24 +829,26 @@ IF(WIN32 AND NOT UNIX)
 	
 	done:
 		
-	")
+	"
+	)
 	
-  SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
-    ${NSIS_GET_32_BITS_PATHES}
+	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
 	"
     SetOutPath \\\"$INSTDIR\\\\dff\\\"
     CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-    CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
     CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
     CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-    ")
+    "
+	)
 	
-	# *.pyc files are not deleted by installer, because they are created at
-	# runtime. So, below, we force deletion of those files.
+#	# *.pyc files are not deleted by installer, because they are created at
+#	# runtime. So, below, we force deletion of those files.
     FOREACH(PYCFILE ${PYC_FILES})
 	  SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
 	  "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	  Delete \\\"$INSTDIR\\\\dff\\\\${PYCFILE}\\\"")
+	  Delete \\\"$INSTDIR\\\\dff\\\\${PYCFILE}\\\""
+	  )
     ENDFOREACH(PYCFILE ${PYC_FILES})
   
 	SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
@@ -803,9 +858,8 @@ IF(WIN32 AND NOT UNIX)
 	 Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
 	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\"
 	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\"
-	")
-	
-	#MESSAGE(STATUS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS})
+	"
+	)
 	
 	
   if (WINALL)
@@ -857,29 +911,31 @@ IF(WIN32 AND NOT UNIX)
 	
     ")
   else(WINALL)
-  	SET(CPACK_NSIS_FULL_INSTALL ${NSIS_GET_32_BITS_PATHES}
-	"
-	\\\${If} \\\$pypath == \\\"\\\"
-		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-		Goto done
-	\\\${Else}
-		Goto pyqt_check
-	\\\${EndIf}
-	pyqt_check:
-		\\\${If} \\\$pyqtpath == \\\"\\\"
-			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+	if (HAVE_64_BIT)
+	else()
+		SET(CPACK_NSIS_FULL_INSTALL ${NSIS_GET_32_BITS_PATHES}
+		"
+		\\\${If} \\\$pypath == \\\"\\\"
+			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
 			Goto done
 		\\\${Else}
-			Goto inst
+			Goto pyqt_check
 		\\\${EndIf}
-	"
-	${NSIS_DEFAULT_LABELS}
-	)
-	
+		pyqt_check:
+			\\\${If} \\\$pyqtpath == \\\"\\\"
+				MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+				Goto done
+			\\\${Else}
+				Goto inst
+			\\\${EndIf}
+		"
+		${NSIS_DEFAULT_LABELS}
+		)
+	endif()
   endif(WINALL)
   SET(CPACK_SOURCE_GENERATOR "ZIP")
   
-  SET(CMAKE_INSTALL_PREFIX "/dff/")
+  SET(CMAKE_INSTALL_PREFIX "")
   
 ELSE(WIN32 AND NOT UNIX)
   SET(CPACK_SOURCE_GENERATOR "TGZ")
@@ -925,10 +981,10 @@ if (UNIX)
     DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
     PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
     RENAME dff-gui)
-else (UNIX)
-  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
-    DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+#else (UNIX)
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
+#    DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}
+#    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endif(UNIX)
 
 INCLUDE(CPack)
@@ -992,55 +1048,15 @@ foreach (pyc_file ${pyc_list})
 endforeach (pyc_file ${pyc_list})
 
 
-macro(SPLIT_PATH_FILE_EXTENSION item)
-  file(TO_CMAKE_PATH ${item} path)
-  string(FIND "${path}" "/" slash_rpos REVERSE)
-  if (slash_rpos EQUAL -1)
-    set(__FILE__ ${path})
-    set(__PATH__ "")
-  else()
-    math(EXPR slash_rpos "${slash_rpos} + 1")
-    string(SUBSTRING ${path} ${slash_rpos} -1 __FILE__)
-    string(SUBSTRING ${path} 0 ${slash_rpos} __PATH__)
-  endif()
-  string(FIND "${__FILE__}" "." dot_rpos REVERSE)
-  if (dot_rpos EQUAL -1)
-    set(__EXTENSION__ "")
-  else()
-    math(EXPR dot_rpos "${dot_rpos} + 1")
-    string(SUBSTRING ${__FILE__} ${dot_rpos} -1 __EXTENSION__)
-  endif()
-endmacro()
-
-#split_path_file_extension("/usr/lib/pouet.py")
-#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
-
-#split_path_file_extension("/usr\\\\lib\\\\pouet.py")
-#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
-
-#split_path_file_extension("/usr/lib/pouet")
-#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
-
-#split_path_file_extension("pouet")
-#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
-
-#split_path_file_extension("pouet.py")
-#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
-
-
 if (WIN32)
   foreach (icu_dynlib ${ICU_DYN_LIBRARIES})
-    file(COPY ${icu_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-    split_path_file_extension(${icu_dynlib})
-    install_rule(${__FILE__})
+    install_rule(${icu_dynlib})
   endforeach()
 
   if (FFMPEG_FOUND)
     file(GLOB ffmpeg_dyn_libraries ${FFMPEG_ROOT}/bin/*.dll)
     foreach(ffmpeg_dynlib ${ffmpeg_dyn_libraries})
-      file(COPY ${ffmpeg_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-      split_path_file_extension(${ffmpeg_dynlib})
-      install_rule(${__FILE__})
+      install_rule(${ffmpeg_dynlib})
     endforeach()
   endif (FFMPEG_FOUND)
 
@@ -1050,9 +1066,7 @@ if (WIN32)
     add_subdirectory(pyregfi)
     file(GLOB reglookup_dyn_libraries ${REGLOOKUP_PATH}/*.dll)
     foreach(reglookup_dynlib ${reglookup_dyn_libraries})
-      file(COPY ${reglookup_dynlib} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-      split_path_file_extension(${reglookup_dynlib})
-      install_rule(${__FILE__})
+		install_rule(${reglookup_dynlib})
     endforeach()
   else (REGLOOKUP_PATH)
     message(STATUS "Reglookup/pyregfi path not set")
