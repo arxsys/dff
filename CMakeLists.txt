@@ -19,6 +19,16 @@ project (dff)
 cmake_minimum_required (VERSION 2.6)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
+## Swig
+find_package(SWIG REQUIRED)
+include(${SWIG_USE_FILE})
+
+STRING (COMPARE LESS "${SWIG_VERSION}" "2.0.7" SWIGOK)
+
+if (${SWIGOK})
+  MESSAGE(FATAL_ERROR "Need SWIG version >= 2.0.7 (current version is ${SWIG_VERSION})")
+endif (${SWIGOK})
+
 set(CMAKE_INCLUDE_PATH "${INCLUDEDIR}")
 set(CMAKE_LIBRARY_PATH "${LIBDIR}")
 
@@ -91,15 +101,6 @@ IF (WIN32)
   ENDIF(WINALL)
 ENDIF(WIN32)
 
-## Swig
-find_package(SWIG REQUIRED)
-include(${SWIG_USE_FILE})
-
-STRING (COMPARE LESS "${SWIG_VERSION}" "2.0.8" SWIGOK)
-
-if (${SWIGOK})
-  MESSAGE(FATAL_ERROR "Need SWIG version >= 2.0.8 (current version is ${SWIG_VERSION})")
-endif (${SWIGOK})
 
 if (ICU_DEP_PATH)
   if (WIN32)
