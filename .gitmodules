@@ -13,3 +13,6 @@
 [submodule "doc"]
 	path = doc
 	url = git://git.digital-forensic.org/doc
+[submodule "Prerequisites"]
+	path = Prerequisites
+	url = git://git.digital-forensic.org/installdeps
