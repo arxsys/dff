@@ -30,13 +30,27 @@ set(PFF_REQUIRED_VERSION "20120802")
 if( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
   set( HAVE_64_BIT 0 )
 else( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
-   if (WIN32)
-       SET( HAVE_64_BIT 0 )
-   else (WIN32)
-       SET(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DSWIGWORDSIZE64)
-       SET( HAVE_64_BIT 1 )
-   endif (WIN32)
+  if (WIN32)
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DSWIGWORDSIZE32)
+  else()
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} -DSWIGWORDSIZE64)
+  endif()
+  set( HAVE_64_BIT 1 )
 endif( "${CMAKE_SIZEOF_VOID_P}" EQUAL 4 )
+
+# Set installation mode, include all items (*.py, ...) Default is development mode
+option(DEVELOP "Start installation mode ?" OFF)
+IF(DEVELOP)
+  message("          /==========================\\")
+  message("          | Running development mode |")
+  message("          \\==========================/")
+ENDIF(DEVELOP)
+
+IF (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+  SET(DEDICATED_BUILD_DIR 1)
+  message(STATUS "Building project in dedicated build directory : ${CMAKE_BINARY_DIR}")
+ENDIF (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+
 
 option(ENABLE_DEBUG "Compile using -g flag ? Useful for debugging" OFF)
 add_definitions(-D__STDC_LIMIT_MACROS)
@@ -51,14 +65,6 @@ if(UNIX)
   endif(ENABLE_DEBUG)
 endif(UNIX)
 # $> cmake -DENABLE_DEBUG:BOOLEAN=OFF
-
-# Set installation mode, include all items (*.py, ...) Default is development mode
-option(INSTALL "Start installation mode ?" OFF)
-IF(INSTALL)
-  message(STATUS "Preparing installation mode")
-ELSE(INSTALL)
-  message(STATUS "Preparing development mode")
-ENDIF(INSTALL)
 
 option(WITH_IOSTAT "enable statistics on input / output comsumption ?" OFF)
 if (WITH_IOSTAT)
@@ -89,18 +95,23 @@ ENDIF(WIN32)
 find_package(SWIG REQUIRED)
 include(${SWIG_USE_FILE})
 
-STRING (COMPARE LESS "${SWIG_VERSION}" "1.3.38" SWIGOK)
+STRING (COMPARE LESS "${SWIG_VERSION}" "2.0.8" SWIGOK)
 
 if (${SWIGOK})
-  MESSAGE(FATAL_ERROR "Need SWIG version >= 1.3.38 (current version is ${SWIG_VERSION})")
+  MESSAGE(FATAL_ERROR "Need SWIG version >= 2.0.8 (current version is ${SWIG_VERSION})")
 endif (${SWIGOK})
 
 if (ICU_DEP_PATH)
-	if (WIN32)
-		set(ICU_INCLUDE_PATH "${ICU_DEP_PATH}/include")
-		set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib")
-		set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin")
-	endif (WIN32)
+  if (WIN32)
+    if (HAVE_64_BIT)
+      set(ICU_PATH_SUFFIX "64")
+    else()
+      set(ICU_PATH_SUFFIX "")
+    endif()
+    set(ICU_INCLUDE_PATH "${ICU_DEP_PATH}/include")
+    set(ICU_LIBRARIES_PATH "${ICU_DEP_PATH}/lib${ICU_PATH_SUFFIX}")
+    set(ICU_DYNLIB_PATH "${ICU_DEP_PATH}/bin${ICU_PATH_SUFFIX}")
+  endif (WIN32)
 endif (ICU_DEP_PATH)
 
 find_package(ICU REQUIRED)
@@ -304,67 +315,331 @@ SET(CMAKE_INSTALL_ORIG_PREFIX ${CMAKE_INSTALL_PREFIX})
 # Install prefix used by Python installer.
 SET(CMAKE_INSTALL_PREFIX ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}/)
 
+#message("${CMAKE_INSTALL_ORIG_PREFIX}")
+
 ## Main purpose of this macro if to copy Python files at install.
 # It also deploys .py files in build directory if there is one.
 LIST(APPEND PYC_FILES "")
+set_property(GLOBAL PROPERTY PYC_FILES)
 FILE(WRITE "${CMAKE_BINARY_DIR}/installed_files.log" "")
 
-macro(install_file target_name)
-  foreach(file ${ARGN})
-    # Be carreful:
-    #  - SWiG generate .py files, which sits in builddir, so we have to check
-    # if file exists in source dir before copying it.
-    #  - Several files are configured at the cmake configure step, moving from
-    # source to build dir, mostly to replace versions variables, so we have to
-    # check if file is missing from build dir before copying it at build step.
-    if(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file} AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
-      add_custom_target("builddeploy.${target_name}.${file}" ALL
-	COMMAND ${CMAKE_COMMAND} -E copy_if_different
-	  ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file}
-	)
-    endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file} AND NOT EXISTS ${CMAKE_CURRENT_BINARY_DIR}/${file})
-    IF (INSTALL)
-      add_custom_target("${target_name}.${file}" ALL)
-      FILE(RELATIVE_PATH rel ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-	  IF ("${rel}" STREQUAL "")
-	  	SET(ifile "${file}")
-	  ELSE("${rel}" STREQUAL "")
-		SET(ifile "${rel}/${file}")
-	  ENDIF("${rel}" STREQUAL "")
-	  FILE(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${ifile}\n")
-      IF(NOT WIN32 AND UNIX)
-		install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}/${rel})
-	  ELSE(NOT WIN32 AND UNIX)
-	    install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${file} DESTINATION /${CMAKE_PROJECT_NAME}/${rel})
-		IF(${file} MATCHES "^.*\\.py$" AND NOT ${rel} STREQUAL "")
-		# Store every .py files in a list, renaming each file to .pyc it
-		# will handle Windows uninstall ; runtime created *.pyc are not
-		# removed by uninstaller.
-			STRING(REPLACE "\\" "\\\\" PYCFILE "${rel}/${file}c")
-			STRING(REPLACE "/" "\\\\" PYCFILE ${PYCFILE})
-			LIST(APPEND PYC_FILES "${PYCFILE}")
-			SET(PYC_FILES "${PYC_FILES}" PARENT_SCOPE)
-		ENDIF(${file} MATCHES "^.*\\.py$" AND NOT ${rel} STREQUAL "")
-	  ENDIF(NOT WIN32 AND UNIX)
-    ENDIF (INSTALL)
-  endforeach(file ${ARGN}) 
-endmacro(install_file target_name)
+FILE(APPEND "${CMAKE_BINARY_DIR}/targets" "")
+
+LIST(APPEND CUSTOM_DEPENDENCIES "")
+set_property(GLOBAL PROPERTY CUSTOM_DEPENDENCIES)
+
+LIST(APPEND CREATED_TARGETS "")
+set_property(GLOBAL PROPERTY CREATED_TARGET)
+
+if (WIN32)
+  set(INSTALL_FILE_DESTINATION "dff")
+elseif (UNIX)
+  set(INSTALL_FILE_DESTINATION ${PYTHON_SITE_PACKAGES_PATH})
+endif (WIN32)
+
+macro(log text)
+  if (LOG_BUILD)
+    message(${text})
+  endif (LOG_BUILD)
+endmacro(log text)
+
+macro(SPLIT_PATH_FILE_EXTENSION item)
+  file(TO_CMAKE_PATH ${item} path)
+  string(FIND "${path}" "/" slash_rpos REVERSE)
+  if (slash_rpos EQUAL -1)
+    set(__FILE__ ${path})
+    set(__PATH__ "")
+  else()
+    math(EXPR slash_rpos "${slash_rpos} + 1")
+    string(SUBSTRING ${path} ${slash_rpos} -1 __FILE__)
+    string(SUBSTRING ${path} 0 ${slash_rpos} __PATH__)
+  endif()
+  string(FIND "${__FILE__}" "." dot_rpos REVERSE)
+  if (dot_rpos EQUAL -1)
+    set(__EXTENSION__ "")
+  else()
+    math(EXPR dot_rpos "${dot_rpos} + 1")
+    string(SUBSTRING ${__FILE__} ${dot_rpos} -1 __EXTENSION__)
+  endif()
+endmacro()
+
+#split_path_file_extension("/usr/lib/pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("/usr\\\\lib\\\\pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("/usr/lib/pouet")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("pouet")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+#split_path_file_extension("pouet.py")
+#message("path: ${__PATH__} -- file: ${__FILE__} -- extension: ${__EXTENSION__}")
+
+
+macro(DFF_CPP_CONTEXT_INIT library_name)
+  INCLUDE_DIRECTORIES(../include)
+
+  list(APPEND arguments CPP_FILES SWIG_FILE LINK_LIBRARIES SWIG_FLAGS DEFINITIONS EXTRA_FILES INCLUDE_DIRS INCLUDE_FILES NO_SWIG_LIB_PREFIX)
+  set(arglist "${ARGN}")
+  foreach(argument ${arguments})
+    list(REMOVE_ITEM arguments ${argument})
+    string(FIND "${arglist}" ${argument} start_pos)
+    if (NOT ${start_pos} EQUAL -1)
+      string(LENGTH "${arglist}" end_pos)
+      foreach(delim_arg ${arguments})
+	string(FIND "${arglist}" ${delim_arg} idx)
+	if (idx GREATER start_pos AND idx LESS end_pos)
+	  set(end_pos ${idx})
+	endif()
+      endforeach()
+      math(EXPR length "${end_pos} - ${start_pos}")
+      string(SUBSTRING "${arglist}" ${start_pos} ${length} extracted)
+      string(REPLACE "${extracted}" "" arglist "${arglist}")
+      string(LENGTH "${argument}" val_start)
+      string(SUBSTRING "${extracted}" ${val_start} -1 __${argument}__)
+      string(STRIP "${__${argument}__}" __${argument}__)
+      log("Values for ${argument} : ${__${argument}__}")
+    else ()
+      list(REMOVE_ITEM arguments ${argument})
+    endif ()
+  endforeach()
+endmacro()
+
+
+macro(VS_LIBRARY_PROPERTIES library_name extension)
+  set_target_properties (${library_name} PROPERTIES
+    SUFFIX "${extension}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_BINARY_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_BINARY_DIR}"
+    RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${CMAKE_CURRENT_BINARY_DIR}"
+    )
+endmacro()
+
+macro(DFF_COMPILE_HEAD)
+  # setting default context when compiling CPP
+  dff_cpp_context_init(library_name ${ARGN})
+
+
+  # getting target from path
+  path_to_target()
+
+  #include(${SWIG_USE_FILE})
+  include_directories(${PYTHON_INCLUDE_PATH})
+  include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+  include_directories(${CMAKE_HOME_DIRECTORY}/dff/api/include)
+
+  if (NOT "${__INCLUDE_DIRS__}" STREQUAL "")
+    include_directories(${__INCLUDE_DIRS__})
+  endif ()
+  if (NOT "${__INCLUDE__}" STREQUAL "")
+    include("${__INCLUDE__}")
+  endif()
+
+  if (NOT "${__DEFINITIONS__}" STREQUAL "")
+    add_definitions(${__DEFINITIONS__})
+  endif()
+
+  if (NOT "${__SWIG_FLAGS__}" STREQUAL "")
+    set(CMAKE_SWIG_FLAGS ${CMAKE_SWIG_FLAGS} ${__SWIG_FLAGS__})
+  endif()
+endmacro()
+
+# Following macro is used to generate DFF's API and Python bindings libraries
+#
+# First argument to provide is the name of the library to create then
+# 
+# Mandatory arguments are :
+#  - CPP_FILES followed by .cpp files
+#  - SWIG_FILE followed by .i files
+#
+# Optional arguments are :
+#  - LINK_LIBRARIES followed by needed library
+#  - SWIG_FLAGS followed by needed flags
+#  - DEFINITIONS followed by needed definitions
+#  - EXTRA_FILES followed by extra files you need to install
+#  - INCLUDE_DIRS followed by absolute path to include directories
+#    By default following include dirs are managed 
+#      * ${CMAKE_CURRENT_SOURCE_DIR}
+#      * ${CMAKE_HOME_DIRECTORY}/dff/api/include
+#      * ${PYTHON_INCLUDE_PATH}
+#  - INCLUDE followed by files to include
+#    By Default ${SWIG_USE_FILE} are included
+#
+# Ex: to create library foo which needs to be linked with
+#     library 'bar'
+#
+# DFF_CPP_API(foo 
+#   CPP_FILES foo.cpp 
+#   SWIG_FILE libfoo.i
+#   LINK_LIBRARIES bar
+#   DEFINITIONS -D__STDC_LIMIT_MACROS
+#   SWIG_FLAGS -threads -fvirtual -fastdispatch
+#   EXTRA_FILES __init__.py
+#   )
+macro(DFF_CPP_API library_name)
+  # Setting default context to compile cpp / swig libraries
+  dff_compile_head(${ARGN})
+
+  # General purpose DFF's library generation
+  add_library(${library_name} SHARED ${__CPP_FILES__})
+  target_link_libraries(${library_name} ${__LINK_LIBRARIES__})
+  if ( CMAKE_GENERATOR MATCHES "Visual Studio")
+    vs_library_properties(${library_name} ".dll")
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${library_name}.dll\n")
+    install(TARGETS ${library_name} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
+  elseif (UNIX)
+    set_target_properties(${library_name} PROPERTIES
+      LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/../"
+      )
+    install(TARGETS ${library_name} DESTINATION "${CMAKE_INSTALL_ORIG_PREFIX}/lib/dff/")    
+  endif ()
+
+  # Python's binding library generation
+  if (${__NO_SWIG_LIB_PREFIX__})
+    set(swig_lib_name "${library_name}")
+  else()
+    set(swig_lib_name "lib${library_name}")
+  endif()
+  set_source_files_properties(${__SWIG_FILE__} PROPERTIES CPLUSPLUS ON)
+  swig_add_module(${swig_lib_name} python ${__SWIG_FILE__})
+  swig_link_libraries(${swig_lib_name} ${PYTHON_LIBRARIES} ${library_name})
+  if ( CMAKE_GENERATOR MATCHES "Visual Studio")
+    vs_library_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} ".pyd")
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${swig_lib_name}_REAL_NAME}.pyd\n")
+    install (TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
+  elseif (UNIX)
+    set_target_properties(${SWIG_MODULE_${swig_lib_name}_REAL_NAME} PROPERTIES
+      SKIP_BUILD_RPATH FALSE
+      BUILD_WITH_INSTALL_RPATH FALSE
+      INSTALL_RPATH "${CMAKE_INSTALL_ORIG_PREFIX}/lib/dff/"
+      INSTALL_RPATH_USE_LINK_PATH TRUE
+      )
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${swig_lib_name}_REAL_NAME}.so\n")
+    install(TARGETS ${SWIG_MODULE_${swig_lib_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
+  endif()
+
+  # Final rules
+  install_file("${swig_lib_name}.py" ${__EXTRA_FILES__})
+  add_dependencies(${current_target} ${library_name} ${SWIG_MODULE_${library_name}_REAL_NAME})
+endmacro()
+
+macro(DFF_CPP_MODULE library_name)
+  # Setting default context to compile cpp / swig libraries
+  dff_compile_head(${ARGN})
+
+  set_source_files_properties(${__SWIG_FILE__} PROPERTIES CPLUSPLUS ON)
+  swig_add_module(${library_name} python ${__SWIG_FILE__} ${__CPP_FILES__})
+  swig_link_libraries(${library_name} ${PYTHON_LIBRARIES} ${__LINK_LIBRARIES__})
+
+  if ( CMAKE_GENERATOR MATCHES "Visual Studio")
+    vs_library_properties(${SWIG_MODULE_${library_name}_REAL_NAME} ".pyd")
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.pyd\n")
+    install (TARGETS ${SWIG_MODULE_${library_name}_REAL_NAME} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
+  elseif (UNIX)
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${rpath}/${SWIG_MODULE_${library_name}_REAL_NAME}.so\n")
+    install(TARGETS ${SWIG_MODULE_${library_name}_REAL_NAME} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${rpath})
+  endif ( CMAKE_GENERATOR MATCHES "Visual Studio" )
+
+  install_file("${library_name}.py" ${__EXTRA_FILES__})
+  add_dependencies(${current_target} ${SWIG_MODULE_${library_name}_REAL_NAME})
+endmacro()
+
+macro(PATH_TO_TARGET)
+  # Obtain relative path
+  file(RELATIVE_PATH rpath ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  # Replace all '/' with '.' resulting variable becomes current_target 
+  string(REPLACE "/" "." current_target "${rpath}")
+  # From current_target, extract the parent_target
+  # parent_target completion depends on all its sub current_target
+  string(FIND "${current_target}" "." dot_rpos REVERSE)
+  if (${dot_rpos} EQUAL -1)
+    set(parent_target "ALL")
+  else (${dot_rpos} EQUAL -1)
+    string(SUBSTRING ${current_target} 0 ${dot_rpos} parent_target)
+  endif (${dot_rpos} EQUAL -1)
+  log("[CONTEXT] :
+  current target : ${current_target}
+  parent target  : ${parent_target}
+  relative path  : ${rpath}")
+endmacro()
+
+macro(install_rule file)
+  if (NOT DEVELOP)
+	split_path_file_extension(${file})
+	if (NOT ${__PATH__} STREQUAL "")
+		file(COPY ${file} DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+	endif()
+    if("${rpath}" STREQUAL "")
+      set(ifile "${__FILE__}")
+    else("${rpath}" STREQUAL "")
+      set(ifile "${rpath}/${__FILE__}")
+    endif("${rpath}" STREQUAL "")
+    file(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${ifile}\n")
+    if (${ifile} MATCHES "^.*\\.py$")
+      string(REPLACE "\\" "\\\\" pyc_file "${ifile}")
+      string(REPLACE "/" "\\\\" pyc_file "${pyc_file}")
+      get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
+      list(APPEND pyc_list "${pyc_file}")
+      set_property(GLOBAL PROPERTY PYC_FILES ${pyc_list})
+    endif (${ifile} MATCHES "^.*\\.py$")
+	log("    install rule : ${CMAKE_CURRENT_BINARY_DIR}/${__FILE__} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath}")
+	install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${__FILE__} DESTINATION ${INSTALL_FILE_DESTINATION}/${rpath})
+  endif (NOT DEVELOP)
+endmacro()
+
+macro(install_file)
+  # Create empty strings which will contain all commands for the resulting current_target
+  set(cmds "")
+  path_to_target()
+  # this loop iter on all files provided in ${ARGN} :
+  #   * In install mode (default)
+  #     - generate install rules
+  #     - For windows targeted platfrom, generate all .py to .pyc to remove
+  #       pyc files during desinstallation
+  #   * all mode with build_dir != src_dir
+  #     - create 'copy if different' command for each .py
+  foreach(file ${ARGV})
+    install_rule(${file})
+    if (DEDICATED_BUILD_DIR)
+      #message("Copying ${CMAKE_CURRENT_SOURCE_DIR}/${file} in ${CMAKE_CURRENT_BINARY_DIR}")
+      # SWIG generated files are already present in CMAKE_CURRENT_BINARY_DIR
+      if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+	if (cmds)
+	  set(cmds ${cmds} &&)
+	endif (cmds)
+	set(cmds ${cmds} ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file})
+      endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+    endif (DEDICATED_BUILD_DIR)
+  endforeach(file ${ARGN})
+  add_custom_target(${current_target} ALL ${cmds})
+  set_target_properties(${current_target} PROPERTIES CREATED "true")
+  get_property(created_targets GLOBAL PROPERTY CREATED_TARGETS)
+  list(APPEND created_targets "${current_target}")
+  set_property(GLOBAL PROPERTY CREATED_TARGETS ${created_targets})
+  log("\n")
+endmacro(install_file)
+
 
 ## Macro to copy lib at install
 macro(install_lib target_name)
-  FILE(RELATIVE_PATH rel ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-  IF ("${rel}" STREQUAL "")
-	SET(ifile "${target_name}")
-  ELSE("${rel}" STREQUAL "")
-	SET(ifile "${rel}/${target_name}")
-  ENDIF("${rel}" STREQUAL "")
-  IF(NOT WIN32 AND UNIX)
-	FILE(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${ifile}.so\n")	
-    INSTALL (TARGETS ${target_name} DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}/${rel})
-  ELSE(NOT WIN32 AND UNIX)
-  	FILE(APPEND "${CMAKE_BINARY_DIR}/installed_files.log" "${ifile}.pyd\n")
-	INSTALL (TARGETS ${target_name} DESTINATION /${CMAKE_PROJECT_NAME}/${rel})
-  ENDIF(NOT WIN32 AND UNIX)	
+  file(RELATIVE_PATH rpath ${CMAKE_BINARY_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+  string(REPLACE "/" "." current_target ${rpath})
+  # From current_target, extract the parent_target
+  # parent_target completion depends on all its sub current_target
+  string(FIND "${current_target}" "." dot_rpos REVERSE)
+  if (${dot_rpos} EQUAL -1)
+    set(parent_target "ALL")
+  else (${dot_rpos} EQUAL -1)
+    string(SUBSTRING ${current_target} 0 ${dot_rpos} parent_target)
+  endif (${dot_rpos} EQUAL -1)
+  log("[CONTEXT] :
+  current target : ${current_target}
+  parent target  : ${parent_target}
+  relative path  : ${rpath}")
+
 endmacro(install_lib)
 
 if (APPLE)
@@ -377,15 +652,41 @@ endif(APPLE)
 # It is why <widget class="QWidget" name="useless" /> has to be appended to .ui
 # files using QTreeWidget. Be carreful, QtDesigner place this second widget at
 # the end of the .ui file ; which make pyuic4 fails to compile.
-macro(uitopy_file target_name)
-  foreach(UIFILE ${ARGN})
-    string(REGEX REPLACE "^(.*)\\.ui$" "ui_\\1.py" PYUICFILE ${UIFILE})
-    add_custom_target("${target_name}.${UIFILE}" ALL
-      COMMAND ${PYTHON_QT4_UIC} -o ${CMAKE_CURRENT_BINARY_DIR}/${PYUICFILE} ${CMAKE_CURRENT_SOURCE_DIR}/${UIFILE}
-      SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/${UIFILE}
-      )
-  endforeach(UIFILE ${ui_dialog_files})
-endmacro(uitopy_file)
+macro(gui_resources_files target_name)
+  path_to_target()
+  set(cmds "")
+  foreach(file ${ARGV})
+    string(FIND ${file} "." ext_pos REVERSE)
+    math(EXPR ext_pos "${ext_pos} + 1")
+    string(SUBSTRING ${file} ${ext_pos} -1 extension)
+    if (extension STREQUAL "ui")
+      string(REGEX REPLACE "^(.*)\\.ui$" "ui_\\1.py" PYUICFILE ${file})
+      set(cmd ${PYTHON_QT4_UIC} -o ${CMAKE_CURRENT_BINARY_DIR}/${PYUICFILE} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+      install_rule(${PYUICFILE})
+    elseif (extension STREQUAL "qrc")
+      string(REGEX REPLACE "^(.*)\\.qrc$" "\\1_rc.py" PY_QRC_FILE ${file})
+      set(cmd ${PYTHON_QT4_RCC} ${CMAKE_CURRENT_SOURCE_DIR}/${file} -o ${CMAKE_CURRENT_BINARY_DIR}/${PY_QRC_FILE})
+      install_rule(${PY_QRC_FILE})
+    elseif (extension STREQUAL "py")
+      if (DEDICATED_BUILD_DIR)
+	if (EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+	  set(cmd ${CMAKE_COMMAND} -E copy_if_different ${CMAKE_CURRENT_SOURCE_DIR}/${file} ${CMAKE_CURRENT_BINARY_DIR}/${file})
+	endif(EXISTS ${CMAKE_CURRENT_SOURCE_DIR}/${file})
+      endif (DEDICATED_BUILD_DIR)
+      install_rule(${file})
+    endif ()
+    if (cmds)
+      set(cmds ${cmds} && ${cmd})
+    else()
+      set(cmds ${cmd})
+    endif()
+  endforeach()
+  add_custom_target(${current_target} ALL ${cmds})
+  set_target_properties(${current_target} PROPERTIES CREATED "true")
+  get_property(created_targets GLOBAL PROPERTY CREATED_TARGETS)
+  list(APPEND created_targets "${current_target}")
+  set_property(GLOBAL PROPERTY CREATED_TARGETS ${created_targets})
+endmacro()
 
 #### Project install
 SET(CPACK_SET_DESTDIR "ON")
@@ -460,17 +761,29 @@ IF(WIN32 AND NOT UNIX)
     !include \\\"x64.nsh\\\"
 	Var /GLOBAL pypath
 	Var /GLOBAL pyqtpath
-
+	Var /GLOBAL py_hkcu_path
+	Var /GLOBAL py_hklm_path
+	
 	StrCpy \\\$pypath \\\"\\\"
+	StrCpy \\\$py_hkcu_path \\\"\\\"
+	StrCpy \\\$py_hklm_path \\\"\\\"
 	StrCpy \\\$pyqtpath \\\"\\\"
+	
+	ReadRegStr \\\$py_hkcu_path HKCU \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${If} \\\${RunningX64}
-		ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${Else}
-		ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${EndIf}
-	")
+	\\\${If} \\\$py_hklm_path != \\\"\\\"
+		StrCpy \\\$pypath \\\$py_hklm_path
+	\\\${Else}
+		StrCpy \\\$pypath \\\$py_hkcu_path
+	\\\${EndIf}
+	"
+	)
 	
   SET(NSIS_GET_64_BITS_PATHES
 	"
@@ -481,7 +794,8 @@ IF(WIN32 AND NOT UNIX)
 	StrCpy \\\$pyqtpath \\\"\\\"
 	ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\" \\\"\\\"
 	ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
-	")
+	"
+	)
 
   SET(NSIS_DEFAULT_LABELS
     "
@@ -519,24 +833,26 @@ IF(WIN32 AND NOT UNIX)
 	
 	done:
 		
-	")
+	"
+	)
 	
-  SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
-    ${NSIS_GET_32_BITS_PATHES}
+	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
 	"
     SetOutPath \\\"$INSTDIR\\\\dff\\\"
     CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-    CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
     CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
     CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-    ")
+    "
+	)
 	
-	# *.pyc files are not deleted by installer, because they are created at
-	# runtime. So, below, we force deletion of those files.
+#	# *.pyc files are not deleted by installer, because they are created at
+#	# runtime. So, below, we force deletion of those files.
     FOREACH(PYCFILE ${PYC_FILES})
 	  SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
 	  "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	  Delete \\\"$INSTDIR\\\\dff\\\\${PYCFILE}\\\"")
+	  Delete \\\"$INSTDIR\\\\dff\\\\${PYCFILE}\\\""
+	  )
     ENDFOREACH(PYCFILE ${PYC_FILES})
   
 	SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
@@ -546,9 +862,8 @@ IF(WIN32 AND NOT UNIX)
 	 Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
 	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\"
 	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\"
-	")
-	
-	#MESSAGE(STATUS ${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS})
+	"
+	)
 	
 	
   if (WINALL)
@@ -600,29 +915,31 @@ IF(WIN32 AND NOT UNIX)
 	
     ")
   else(WINALL)
-  	SET(CPACK_NSIS_FULL_INSTALL ${NSIS_GET_32_BITS_PATHES}
-	"
-	\\\${If} \\\$pypath == \\\"\\\"
-		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-		Goto done
-	\\\${Else}
-		Goto pyqt_check
-	\\\${EndIf}
-	pyqt_check:
-		\\\${If} \\\$pyqtpath == \\\"\\\"
-			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+	if (HAVE_64_BIT)
+	else()
+		SET(CPACK_NSIS_FULL_INSTALL ${NSIS_GET_32_BITS_PATHES}
+		"
+		\\\${If} \\\$pypath == \\\"\\\"
+			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
 			Goto done
 		\\\${Else}
-			Goto inst
+			Goto pyqt_check
 		\\\${EndIf}
-	"
-	${NSIS_DEFAULT_LABELS}
-	)
-	
+		pyqt_check:
+			\\\${If} \\\$pyqtpath == \\\"\\\"
+				MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+				Goto done
+			\\\${Else}
+				Goto inst
+			\\\${EndIf}
+		"
+		${NSIS_DEFAULT_LABELS}
+		)
+	endif()
   endif(WINALL)
   SET(CPACK_SOURCE_GENERATOR "ZIP")
   
-  SET(CMAKE_INSTALL_PREFIX "/dff/")
+  SET(CMAKE_INSTALL_PREFIX "")
   
 ELSE(WIN32 AND NOT UNIX)
   SET(CPACK_SOURCE_GENERATOR "TGZ")
@@ -635,14 +952,11 @@ ENDIF(WIN32 AND NOT UNIX)
 # RedHat rpm dependencies
 #  python >= ${PYTHON_VERSION}.0, PyQt4 >= 4.4.0, python-magic >= 4.26
 
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
-  DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}
-  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 
 if (UNIX)
 # Compress manpage
   add_custom_command(OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz
-                     COMMAND ${GZIP_TOOL} -c ${CMAKE_CURRENT_SOURCE_DIR}/docs/dff.1 > ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz
+                     COMMAND ${GZIP_TOOL} -c ${CMAKE_CURRENT_SOURCE_DIR}/doc/man/dff.1 > ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz
                      COMMENT "Building dff.1.gz")
   add_custom_target(manpage ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz)
 # Install man page
@@ -659,24 +973,28 @@ if (UNIX)
   #PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.png ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.xpm
   DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/pixmaps
-  PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.desktop
   DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/applications
   PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
+    DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    RENAME dff)
+  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff-gui.py
+    DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
+    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+    RENAME dff-gui)
+#else (UNIX)
+#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
+#    DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}
+#    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
 endif(UNIX)
 
 INCLUDE(CPack)
 ENABLE_TESTING()
 SUBDIRS(testsuite)
 
-#### Deploying package file and DFF startup files
-set(dff_scripts
-  __init__.py
-#  dff.py
-#  dff-gui.py
-)
-
-#install_file(dff_launch ${dff_scripts})
 
 # Override deployment of launcher to add proper Python binary prefix
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff.py ${CMAKE_CURRENT_BINARY_DIR}/dff.py)
@@ -688,44 +1006,77 @@ configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff-gui.py ${CMAKE_CURRENT_BINARY_DIR
 #### Subdirectories to recurse
 add_subdirectory (dff)
 
+function(CHECK_ORPHANED_PARENT_DEPENDENCIES target)
+  set(dot_pos 0)
+  set(tmp ${target})
+  list(APPEND prefixes "")
+  set(current_target ${target})
+  while((NOT ${dot_pos} EQUAL -1) AND (NOT ${tmp} STREQUAL "dff"))
+    string(FIND ${tmp} "." dot_pos REVERSE)
+    string(SUBSTRING ${tmp} 0 ${dot_pos} tmp)
+    list(APPEND prefixes ${tmp})
+  endwhile()
+  list(REVERSE prefixes)
+  set(parent_target "")
+  foreach(prefix ${prefixes})
+    get_target_property(prop ${prefix} CREATED)
+    if (NOT prop STREQUAL "true")
+      log("Target <${prefix}> does not exist")
+      add_custom_target("${prefix}" ALL DEPENDS ${parent_target})
+      log("  custom target created with DEPENDS setted to ${parent_target}")
+      set_target_properties(${prefix} PROPERTIES CREATED "true")
+    endif()
+    set(parent_target ${prefix})
+  endforeach()
+endfunction()
+
+get_property(created_targets GLOBAL PROPERTY CREATED_TARGETS)
+foreach(current_target ${created_targets})
+  string(FIND ${current_target} "." dot_pos REVERSE)
+  string(SUBSTRING ${current_target} 0 ${dot_pos} parent_target)
+  log("Making build dependencies between ${current_target} and its parent ${parent_target}")
+  if (NOT ${current_target} STREQUAL "dff")
+    check_orphaned_parent_dependencies(${current_target})
+    add_dependencies(${parent_target} ${current_target})
+  endif()
+endforeach()
+
+
+log("
+   ==========================================
+   | .pyc files to be uninstalled with NSIS |
+   ==========================================\n")
+get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
+foreach (pyc_file ${pyc_list})
+  log("${pyc_file}")
+endforeach (pyc_file ${pyc_list})
+
+
 if (WIN32)
-	#
-	FILE(COPY ${ICU_DYNLIB_PATH}/icuuc48.dll ${ICU_DYNLIB_PATH}/icudt48.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-	set (icu_dynlib
-			icuuc48.dll
-			icudt48.dll
-		)
-	install_file(icu ${icu_dynlib})
-	if (FFMPEG_FOUND)
-		FILE(COPY ${FFMPEG_ROOT}/bin/avcodec-54.dll ${FFMPEG_ROOT}/bin/avdevice-54.dll ${FFMPEG_ROOT}/bin/avfilter-3.dll ${FFMPEG_ROOT}/bin/avformat-54.dll ${FFMPEG_ROOT}/bin/avutil-51.dll ${FFMPEG_ROOT}/bin/postproc-52.dll ${FFMPEG_ROOT}/bin/swresample-0.dll ${FFMPEG_ROOT}/bin/swscale-2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-		set (ffmpeg_dynlib
-			avcodec-54.dll
-			avdevice-54.dll
-			avfilter-3.dll
-			avformat-54.dll
-			avutil-51.dll
-			postproc-52.dll
-			swresample-0.dll
-			swscale-2.dll
-			)
-		install_file(ffmpeg ${ffmpeg_dynlib})
-	endif (FFMPEG_FOUND)
-	if (REGLOOKUP_PATH)
-		message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
-		file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
-		add_subdirectory(pyregfi)
-		file(COPY ${REGLOOKUP_PATH}/libiconv-2.dll ${REGLOOKUP_PATH}/libregfi.dll ${REGLOOKUP_PATH}/libtalloc.dll ${REGLOOKUP_PATH}/pthreadGC2.dll DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
-		set(reglookup_files
-			libiconv-2.dll
-			libregfi.dll
-			libtalloc.dll
-			pthreadGC2.dll
-			)
-		install_file(reglookup ${reglookup_files})
-	else (REGLOOKUP_PATH)
-		message(STATUS "Reglookup/pyregfi path not set")
-	endif (REGLOOKUP_PATH)
+  foreach (icu_dynlib ${ICU_DYN_LIBRARIES})
+    install_rule(${icu_dynlib})
+  endforeach()
+
+  if (FFMPEG_FOUND)
+    file(GLOB ffmpeg_dyn_libraries ${FFMPEG_ROOT}/bin/*.dll)
+    foreach(ffmpeg_dynlib ${ffmpeg_dyn_libraries})
+      install_rule(${ffmpeg_dynlib})
+    endforeach()
+  endif (FFMPEG_FOUND)
+
+  if (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
+    file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory(pyregfi)
+    file(GLOB reglookup_dyn_libraries ${REGLOOKUP_PATH}/*.dll)
+    foreach(reglookup_dynlib ${reglookup_dyn_libraries})
+		install_rule(${reglookup_dynlib})
+    endforeach()
+  else (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path not set")
+  endif (REGLOOKUP_PATH)
 endif (WIN32)
+
 
 if (UNIX)
 ADD_CUSTOM_COMMAND(
