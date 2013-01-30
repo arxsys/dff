@@ -689,6 +689,54 @@ macro(gui_resources_files target_name)
   set_property(GLOBAL PROPERTY CREATED_TARGETS ${created_targets})
 endmacro()
 
+
+# Override deployment of launcher to add proper Python binary prefix
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff.py ${CMAKE_CURRENT_BINARY_DIR}/dff.py)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff-gui.py ${CMAKE_CURRENT_BINARY_DIR}/dff-gui.py)
+
+# Create launcher. Replace CMake variables in it, used after install.
+#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ressources/linux_launcher.sh ${CMAKE_CURRENT_BINARY_DIR}/dff)
+
+#### Subdirectories to recurse
+add_subdirectory (dff)
+
+if (WIN32)
+  foreach (icu_dynlib ${ICU_DYN_LIBRARIES})
+    install_rule(${icu_dynlib})
+  endforeach()
+
+  if (FFMPEG_FOUND)
+    file(GLOB ffmpeg_dyn_libraries ${FFMPEG_ROOT}/bin/*.dll)
+    foreach(ffmpeg_dynlib ${ffmpeg_dyn_libraries})
+      install_rule(${ffmpeg_dynlib})
+    endforeach()
+  endif (FFMPEG_FOUND)
+
+  if (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
+    file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
+    add_subdirectory(pyregfi)
+    file(GLOB reglookup_dyn_libraries ${REGLOOKUP_PATH}/*.dll)
+    foreach(reglookup_dynlib ${reglookup_dyn_libraries})
+		install_rule(${reglookup_dynlib})
+    endforeach()
+  else (REGLOOKUP_PATH)
+    message(STATUS "Reglookup/pyregfi path not set")
+  endif (REGLOOKUP_PATH)
+endif (WIN32)
+
+
+if (UNIX)
+ADD_CUSTOM_COMMAND(
+ 	OUTPUT ${CMAKE_BINARY_DIR}/ctags
+	COMMAND ctags --languages=+C++,+Python --exclude=[*.cxx,*wrap.h] --recurse=yes ${CMAKE_SOURCE_DIR}
+	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+ADD_CUSTOM_TARGET(tags DEPENDS ${CMAKE_BINARY_DIR}/ctags)
+endif (UNIX)
+
+
 #### Project install
 SET(CPACK_SET_DESTDIR "ON")
 
@@ -849,12 +897,13 @@ IF(WIN32 AND NOT UNIX)
 	
 #	# *.pyc files are not deleted by installer, because they are created at
 #	# runtime. So, below, we force deletion of those files.
-    FOREACH(PYCFILE ${PYC_FILES})
-	  SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-	  "${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	  Delete \\\"$INSTDIR\\\\dff\\\\${PYCFILE}\\\""
-	  )
-    ENDFOREACH(PYCFILE ${PYC_FILES})
+    get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
+    foreach (pyc_file ${pyc_list})
+      set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+	"${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+	  Delete \\\"$INSTDIR\\\\dff\\\\${pyc_file}\\\""
+	)
+    endforeach (pyc_file ${pyc_list})
   
 	SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
     "
@@ -997,16 +1046,6 @@ ENABLE_TESTING()
 SUBDIRS(testsuite)
 
 
-# Override deployment of launcher to add proper Python binary prefix
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff.py ${CMAKE_CURRENT_BINARY_DIR}/dff.py)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/dff-gui.py ${CMAKE_CURRENT_BINARY_DIR}/dff-gui.py)
-
-# Create launcher. Replace CMake variables in it, used after install.
-#configure_file(${CMAKE_CURRENT_SOURCE_DIR}/ressources/linux_launcher.sh ${CMAKE_CURRENT_BINARY_DIR}/dff)
-
-#### Subdirectories to recurse
-add_subdirectory (dff)
-
 function(CHECK_ORPHANED_PARENT_DEPENDENCIES target)
   set(dot_pos 0)
   set(tmp ${target})
@@ -1051,40 +1090,3 @@ get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
 foreach (pyc_file ${pyc_list})
   log("${pyc_file}")
 endforeach (pyc_file ${pyc_list})
-
-
-if (WIN32)
-  foreach (icu_dynlib ${ICU_DYN_LIBRARIES})
-    install_rule(${icu_dynlib})
-  endforeach()
-
-  if (FFMPEG_FOUND)
-    file(GLOB ffmpeg_dyn_libraries ${FFMPEG_ROOT}/bin/*.dll)
-    foreach(ffmpeg_dynlib ${ffmpeg_dyn_libraries})
-      install_rule(${ffmpeg_dynlib})
-    endforeach()
-  endif (FFMPEG_FOUND)
-
-  if (REGLOOKUP_PATH)
-    message(STATUS "Reglookup/pyregfi path: ${REGLOOKUP_PATH}")
-    file(COPY ${REGLOOKUP_PATH}/python/pyregfi DESTINATION ${CMAKE_CURRENT_SOURCE_DIR})
-    add_subdirectory(pyregfi)
-    file(GLOB reglookup_dyn_libraries ${REGLOOKUP_PATH}/*.dll)
-    foreach(reglookup_dynlib ${reglookup_dyn_libraries})
-		install_rule(${reglookup_dynlib})
-    endforeach()
-  else (REGLOOKUP_PATH)
-    message(STATUS "Reglookup/pyregfi path not set")
-  endif (REGLOOKUP_PATH)
-endif (WIN32)
-
-
-if (UNIX)
-ADD_CUSTOM_COMMAND(
- 	OUTPUT ${CMAKE_BINARY_DIR}/ctags
-	COMMAND ctags --languages=+C++,+Python --exclude=[*.cxx,*wrap.h] --recurse=yes ${CMAKE_SOURCE_DIR}
-	WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-)
-
-ADD_CUSTOM_TARGET(tags DEPENDS ${CMAKE_BINARY_DIR}/ctags)
-endif (UNIX)
