@@ -963,7 +963,8 @@ IF(WIN32 AND NOT UNIX)
     endVS:
        RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"
 	
-    ")
+    "
+	${NSIS_GET_32_BITS_PATHES})
   else(WINALL)
 	if (HAVE_64_BIT)
 	else()
