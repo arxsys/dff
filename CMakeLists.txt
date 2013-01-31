@@ -923,7 +923,7 @@ IF(WIN32 AND NOT UNIX)
     message(STATUS "vcredist installer: ${VCREDIST_INSTALLER}")
 	message(STATUS "apsw installer: ${APSW_INSTALLER}")
 	message(STATUS "numpy installer: ${NUMPY_INSTALLER}")
-	message(STATUS "matplotlib installer: ${MATPLOT_INSTALLER}")
+	message(STATUS "matplotlib installer: ${MATPLOTLIB_INSTALLER}")
 	message(STATUS "PIL installer: ${PIL_INSTALLER}")
     if (WIN32)
       SET(CPACK_SYSTEM_NAME "win32_all_in_one")
@@ -949,8 +949,8 @@ IF(WIN32 AND NOT UNIX)
 		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
 		Goto endNumPy
 	endNumPy:
-		MessageBox MB_YESNO \\\"Install ${MATPLOT_INSTALLER}? \\\" /SD IDYES IDNO endMatPlot
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOT_INSTALLER}\\\"'
+		MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO endMatPlot
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
 		Goto endMatPlot
 	endMatPlot:
 		MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO endPil
