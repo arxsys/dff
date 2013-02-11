@@ -19,31 +19,21 @@ Digital-forensic framework launcher
 """
 import os, sys, getopt
 
-# ensure dist-packages will be loaded be pyshared on Debian
-# else private modules won't be found
-from distutils.sysconfig import get_python_lib
-if not os.path.exists(os.path.join("dff", "modules")) and os.path.exists(os.path.join(get_python_lib(), "dff")):
-    sys.path.insert(0, os.path.join(get_python_lib()))
-
-if os.name == "posix": 
-    try :
-        import dl
-        sys.setdlopenflags(sys.getdlopenflags() | dl.RTLD_GLOBAL)
-    except ImportError:
-        import ctypes
-        sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
+if os.name == "posix":
+  try :
+      import dl
+      sys.setdlopenflags(sys.getdlopenflags() | dl.RTLD_GLOBAL)
+  except ImportError:
+      import ctypes
+      sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
 
 from dff.api.manager.manager import ApiManager
+
 from dff.ui.gui.gui import GUI
 from dff.ui.console.console import Console
 from dff.ui.ui import Usage
 
-MODULES_PATHS = []
-
-if os.path.exists(os.path.join("dff", "modules")):
-    MODULES_PATHS = [os.path.join("dff", "modules")]
-elif os.path.exists(os.path.join(get_python_lib(), "dff")):
-    MODULES_PATHS = [os.path.join(get_python_lib(), "dff", "modules")]
+MODULES_PATHS = ["dff/modules"]
 
 def fg():
     """Launch shell loop"""
