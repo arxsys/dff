@@ -43,7 +43,7 @@ if __name__ == "__main__":
     """You can place some script command here for testing purpose"""
     argv = Usage(sys.argv[1:])
     if argv.batch:
-       console = Console(argv.debug, argv.verbosity)
+       console = Console(debug=argv.debug, verbosity=argv.verbosity)
        console.loadModules(MODULES_PATHS)
        console.onecmd("batch " + argv.batch, False)
     ui = GUI(argv.debug, argv.verbosity)
