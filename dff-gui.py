@@ -19,14 +19,6 @@ Digital-forensic framework launcher
 """
 import os, sys, getopt
 
-if os.name == "posix":
-  try :
-      import dl
-      sys.setdlopenflags(sys.getdlopenflags() | dl.RTLD_GLOBAL)
-  except ImportError:
-      import ctypes
-      sys.setdlopenflags(sys.getdlopenflags() | ctypes.RTLD_GLOBAL)
-
 from dff.api.manager.manager import ApiManager
 
 from dff.ui.gui.gui import GUI
