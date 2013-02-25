@@ -16,3 +16,6 @@
 [submodule "dff/unsupported"]
 	path = dff/unsupported
 	url = git://git.digital-forensic.org/unsupported
+[submodule "prerequisites"]
+	path = prerequisites
+	url = git://git.digital-forensic.org/installdeps
