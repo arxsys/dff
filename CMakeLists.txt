@@ -933,7 +933,7 @@ IF(WIN32 AND NOT UNIX)
 	SET(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	${NSIS_DEFAULT_LABELS}
 	"
-    MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO endPython
+    MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
     ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
     Goto InstPyQt
     InstPyQt:
