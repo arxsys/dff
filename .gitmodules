@@ -13,9 +13,9 @@
 [submodule "doc"]
 	path = doc
 	url = git://git.digital-forensic.org/doc
-[submodule "Prerequisites"]
-	path = Prerequisites
-	url = git://git.digital-forensic.org/installdeps
 [submodule "dff/unsupported"]
 	path = dff/unsupported
 	url = git://git.digital-forensic.org/unsupported
+[submodule "prerequisites"]
+	path = prerequisites
+	url = git://git.digital-forensic.org/installdeps

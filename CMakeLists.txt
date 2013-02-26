@@ -61,6 +61,7 @@ IF (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
   message(STATUS "Building project in dedicated build directory : ${CMAKE_BINARY_DIR}")
 ENDIF (NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
 
+option(BUILD_UNSUPPORTED "Build unsupported modules ?" OFF)
 
 option(ENABLE_DEBUG "Compile using -g flag ? Useful for debugging" OFF)
 add_definitions(-D__STDC_LIMIT_MACROS)
@@ -916,14 +917,14 @@ IF(WIN32 AND NOT UNIX)
 	
 	
   if (WINALL)
-    add_subdirectory (Prerequisites)
+    add_subdirectory (prerequisites)
     message(STATUS "python installer: ${PYTHON_INSTALLER}")
     message(STATUS "pyqt installer: ${PYQT_INSTALLER}")
     message(STATUS "vcredist installer: ${VCREDIST_INSTALLER}")
-	message(STATUS "apsw installer: ${APSW_INSTALLER}")
-	message(STATUS "numpy installer: ${NUMPY_INSTALLER}")
-	message(STATUS "matplotlib installer: ${MATPLOTLIB_INSTALLER}")
-	message(STATUS "PIL installer: ${PIL_INSTALLER}")
+    message(STATUS "apsw installer: ${APSW_INSTALLER}")
+    message(STATUS "numpy installer: ${NUMPY_INSTALLER}")
+    message(STATUS "matplotlib installer: ${MATPLOTLIB_INSTALLER}")
+    message(STATUS "PIL installer: ${PIL_INSTALLER}")
     if (WIN32)
       SET(CPACK_SYSTEM_NAME "win32_all_in_one")
     else(WIN32)
@@ -932,38 +933,52 @@ IF(WIN32 AND NOT UNIX)
 	SET(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	${NSIS_DEFAULT_LABELS}
 	"
-    MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO endPython
+    MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
     ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
-    Goto endPython
-    endPython:
-        MessageBox MB_YESNO \\\"Install ${PYQT_INSTALLER} ? \\\" /SD IDYES IDNO endPyQt
+    Goto InstPyQt
+    InstPyQt:
+        MessageBox MB_YESNO \\\"Install ${PYQT_INSTALLER} ? \\\" /SD IDYES IDNO InstAPSW
         ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYQT_INSTALLER}\\\"'
-        Goto endPyQt
-    endPyQt:
-		MessageBox MB_YESNO \\\"Install ${APSW_INSTALLER}? \\\" /SD IDYES IDNO endAPSW
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${APSW_INSTALLER}\\\"'
-		Goto endAPSW
-	endAPSW:
-		MessageBox MB_YESNO \\\"Install ${NUMPY_INSTALLER}? \\\" /SD IDYES IDNO endNumPy
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
-		Goto endNumPy
-	endNumPy:
-		MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO endMatPlot
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
-		Goto endMatPlot
-	endMatPlot:
-		MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO endPil
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PIL_INSTALLER}\\\"'
-		Goto endPil
-	endPil:
-		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO endVS
+        Goto InstAPSW
+    InstAPSW:
+	MessageBox MB_YESNO \\\"Install ${APSW_INSTALLER}? \\\" /SD IDYES IDNO InstPil
+	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${APSW_INSTALLER}\\\"'
+	Goto InstPil
+    InstPil:
+	MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO InstVcredist
+	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PIL_INSTALLER}\\\"'
+	Goto InstVcredist
+	")
+    if (BUILD_UNSUPPORTED)
+      set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
+	"
+    InstVcredist:
+	MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstNumpy
         ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
-        Goto endVS
-    endVS:
-       RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"
-	
-    "
-	${NSIS_GET_32_BITS_PATHES})
+	Goto InstNumpy
+    InstNumpy:
+	MessageBox MB_YESNO \\\"Install ${NUMPY_INSTALLER}? \\\" /SD IDYES IDNO InstMatplotlib
+	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
+	Goto InstMatplotlib
+    IntMatplotlib:
+	MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO InstEnd
+	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
+	Goto InstEnd
+	")
+    else()
+      set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
+	"
+    InstVcredist:
+	MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstEnd
+        ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+	Goto InstEnd
+	")      
+    endif()
+          set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
+	    "
+    InstEnd:
+       RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"	
+    " ${NSIS_GET_32_BITS_PATHES})
   else(WINALL)
 	if (HAVE_64_BIT)
 	else()

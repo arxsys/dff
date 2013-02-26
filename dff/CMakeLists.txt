@@ -18,4 +18,8 @@ add_subdirectory(api)
 add_subdirectory(modules)
 add_subdirectory(ui)
 
+if (BUILD_UNSUPPORTED)
+  add_subdirectory(unsupported)
+endif()
+
 install_file(__init__.py)
