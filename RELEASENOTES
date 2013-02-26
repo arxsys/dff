@@ -5,7 +5,7 @@ Detailed description of changes is available in the CHANGES.current and
 CHANGES files. The summary below just contains a brief overview of the changes
 made in each release.
 
-DFF-1.2.0 summary:
+DFF-1.3.0 summary:
 
 Features:
 ---------
@@ -13,172 +13,68 @@ Features:
   User Interfaces:
   ----------------
 
-* Batch script : It is now possible to provide batch script directly as a 
-parameter when invoking dff.py using the switch "-b" followed by the local file 
-containing commands. This functionality uses the "batch" module.
+* Node browser : 
+        - The browser now is UTF-8 aware, so it mean that character of file name and directory will be readable
+in any languages. 
+        - You can use the arrow icon near the filename to display the content of a directory and is subdirectory (recursively).
+        - You can now tag  
+        - You can now filter nodes
+        - The menu of the search panel was entirely renewed it's much more easy to use now
+        - You can now easily create attribute list and dynamically change column
+        - Video have thumbnail
+        - A blue icon with a blue '+' now appear on top of node who created child (Have a module applyied on it).
+        - A new icon who look like a 'link' now appear on top of node who is a VFS link to an other node. You can double-click on it to be redirected to the linked node.
+        - A new root icon called "modules root" give short to all node who have created child.
+        - A new check box system is in place to select files you want to bookmark or do an other operations on it. You can also use the right button menu to select/deselect your choices.
+        - The path bar have now have a button and an edit mode 
 
-* Filter : To enable finding and filtering abilities through the GUI, a 
-dedicated interface has been developed to ease the creation of queries. Most 
-useful filters are provided, and it is also possible to query extended 
-attributes.
+* batch : Now DFF shell command in batch must preceed by : ! , other command will be interepret as python code. So you can merge DFF command and python in a batch script. Comment line starting with # will no be printed anymore as you can use the python print function directly. When using it with python think to launch DFF in '-d'debug mode ('-d') to have the output redirected.
 
-* Preview : A new widget providing a graphical representation of the currently 
-selected node. When a node is selected, this widget automatically selects the 
-most appropriate viewer. Pictures, text, html and video files are currently 
-supported. If there's no available viewer, the hexadecimal viewer will be used.
-If you create or add any other viewer associated with a different file type, it
-will be automatically used by the widget.
-
-* Attributes pane : When double clicking on an attribute in the tree of 
-Attributes pane, a popup is displayed, allowing to copy the argument.
-
-* Module Browser : A new widget has been developed to provide a new way to 
-browse, view and apply modules.
-
-* Task manager widget : When double-clicking on a module in the task manager,
-the output is now provided in a dedicated tab.
+* preview widget : You can now disable preview by clicking the check box on the top of the widget. This can fasten the browsing of file with the keyboard arow in the node browser as the preview menu didn't need to update each time a file is selected.
 
   Modules:
   --------
 
-* Web viewer : This graphical module renders web pages and tries to reconstruct 
-them, if corresponding linked image or css file are found in the dump. 
-Currently, navigation between local files is disabled in order to forbid 
-external browsing. For security reasons, JavaScript is also disabled by default.
+* Compound : Parse and extract content of compound documents : MS office document before 2010, MSI, thumbs.db, ...
+This modules also have specific functionallity for MS office document, it can extract metadata for document and sub document stream contained in the archive, it can also extract picture embedded in datastream, WordDocument stream (.doc) and Pictures stream (.ppt).
 
-* Find : This shell module gives the ability to search and filter directly in 
-the console. As required arguments, it takes a query and the node from
-where the search will start. In order to have a human readable representation of
-the query, a string describing the filter has to be provided. As optional 
-arguments, 'save_result' option will automatically create links to matched nodes
-. By default, matches are not displayed but this can be enabled by providing the
-"verbose" switch.
+* Prefetch : Extract metadata of prefetch file (.pf)
+ 
+* Lnk : Extract metadata of link file (.lnk)
 
-* Batch scripting : Reads a local file which contains DFF commands (one per 
-line) and execute them. It also accepts comments using the '#' character. 
-This module eases tests and developments by avoiding recurrent operation like 
-choosing, configuring and launching a module and provides to users a way to 
-automatize some tasks.
+* Text: Module was enhanced to let you choose the encoding of the document you're reading
 
-* Partition : 
-  - Add creation of unallocated areas in a dedicated folder. 
-  - Two new arguments: 
-    * sector size (to manage 4k sectors for example)
-    * start offset of the MBR. 
-  - Results of the module has been enhanced to provide all unallocated 
-    spaces information. 
-  - Attributes of created nodes provide more detailed information.
+* Video thumbnail viewer : It display 10 thumbnail of a video generated every 10% .
 
-* Fatfs : Fatfs module has been enhanced to support more forensics features. 
-  - Module now creates several nodes representing:
-    * reserved sectors
-    * unallocated space (based on the first FAT cluster status)
-    * filesystem slack space (size of the underlying file minus total 
-      sectors found in the boot sector).
-  - The generated tree has also been enhanced so as to base the name of 
-    the entry node (root of the module) on the volume label (if not present, 
-    NONAME is used).
-  - All FATs (even if there are 5 FATs) are also created as nodes with 
-    their own attributes (allocated and free clusters). This enables to quickly
-    define if there are differences between FATs, based on their clusters 
-    status, by comparing their md5 hash, or by using the 'diff' module. 
-  - The module now provides its progression.
+* Devices : For linux now devices modules can be build to used libudev rather than dbus and HAL. 
 
-* EWF : The ewf module has been rewritten to support the v2 API of the library 
-developed by Joachim Metz (libewf).
+* Registry : The registry modules is now based on pyregfi. You can choose to simply execute the module then use the viewer to view the content of the base or you can choose to extract content directly in DFF tree by specfying option.
 
+* Registry viewer : A regedit like viewer to browser registry content.
 
-* AFF : The module now supports afflib before version 3.6.11. Version is 
-obtained during the build process and provided to the preprocessor.
-
-
-  Build:
-  ------
-
-* All dependencies are now correctly checked before starting compilation. 
-Dedicated CMake modules have been created to find bfio, pff, ewf, afflib and 
-tre libraries. If not found, related modules won't be compiled. This permits to
-compile DFF even if dependencies are not installed. On Windows platforms, 
-version of the compiler is better managed to include the right headers.
+* hash :
+        - The module can now tag node by using a hash set (One hash per line)
+        - It can detect hash set base type (md5, sha1, ...) automatically
+        - You can specify a maximum size of file to be hashed
+        - You can specify a cache limit where file will not be cached but result will be get dynamically. (To use less memory when there is a very large amount of file to hash).
 
   API:
   ----
 
-* Datatypes : Code in charge of magic library is now fully developed in C++ 
-resulting in faster processing.
-
-* UID Object System : This release has been the occasion to associate unique 
-identifier to some objects of the API. Currently it only concerns fso and nodes
-objects. This also let you obtain fso and nodes by their ID at run time.
-
-* FSO : 
-  - Each fso objects are linked together in a tree way. It is possible to know
-    dependencies between modules in charge of the creation of node.
-  - Add a new method to obtain a Node from its id 
-  - Add a new methode to have access to all created nodes as a list.
-
-* Node : All attributes methods of Node have been refactored and are faster.
-  - Add a new  method which return its extension if available. 
-  - Testing compatibility with a module has been extended by checking the 
-    extension besides its type. Indeed, sometimes, it was not accurate to only
-    rely on results provided by magic to auto detect compatible modules. 
-    For example, VmWare configuration files are detected as text by magic.
+* Variant : Variant are now reference counted in C++. You must use variant_p to declare you variant as refcounted. 
 
 * VFS : 
-  - Now have an UID Object System. 
-  - New method to obtain fso by their ids. 
-  - New method to obtain nodes by their ids.
-  - New method to access all applied modules of type fso. 
-  - All orphaned nodes (nodes which don't have a related fso), are also managed
-    by the VFS.
+        - A cache template was created and used for fileMapping, vfile, and attribute. 
+        - A refcount template was added.
+        - A tag manager was added to the API, the ability to tag node node.setTag("malware"), search and filter by tags
 
-* Search : Search API has been totally rewritten in an object oriented way, 
-using TRE library.
-  - Search objects provide methods to set pattern syntax:
-    * fixed
-    * wildcard 
-    * approximate (use TRE library)
-    * regexp patterns (use TRE library)
-  - Search are faster and relies on a modified version of fastsearch 
-    functions implemented in Python (BoyerMoore + Bloom filters).
+* Search : You can now search keyword entered in a dictionary (file).
 
-* Filter : As mentioned, the main feature of this release is filtering 
-capability. It has been directly implemented in the API to provide Filter object
-  - Several methods enable to set the query, to compile it and return matching
-    nodes. Filter objects are "event aware" in order to give the possibility to
-    stop the process but also to inform about progression and the number of 
-    matched nodes.
-  - It is possible to apply a query recursively or only in one folder.
+  Build:
+  ------
+* GIT : The achitecture as  changed. Now it's subdivised in several submodules.
 
-* VFile : Objects are compliant with the new search API but is still 
-compatible with the old one. 
-  - Extends their ability by matching patterns based on :
-    * regular expressions 
-    * approximate search strings.
-  - VFile is also "event aware" meaning that it could receive external 
-    message to stop heavy processing such as searches.
-
-* ConfigManager : Provides a way to unregister configuration
-of modules at run time. It is mostly used by the loader when a module is 
-reloaded.
-
-* VTime : 
-  - Comparison operators have been implemented in vtime
-  - Can be now created with a string as parameter or a timestamps
-  - Timestamps can be Unix or Microsoft based (64 bits) allowing auto 
-    conversion.
-
-* Loader : 
-  - When a module can not be loaded properly, traceback is saved and 
-    encountered errors are summed up at the end of loading. 
-  - Unregisters the configuration of the module if this one is reloaded 
-    at run time.
-
-* Mimetree : A new object is provided to extract mime types from compiled magic 
-file (version 7 and 8 are managed). The result is a two level tree containing 
-main categories (such as images) and at the second level subcategories (such as 
-jpeg).
-
+* Launch permission : It's now possible to directly launch DFF as administrator by right-clicking on the desktop link on Windows.
 
 Bug Fixes :
 -----------
@@ -186,63 +82,54 @@ Bug Fixes :
   GUI:
   ----
 
-* Interpreter :  When huge processing were done in the GUI interpreter, it 
-froze the whole interface. Execution of Python code is now done in a dedicated 
-thread and edition is disabled until thread has finished.
-
-* Attributes column selector : In some cases, the selection of attributes to be
-added as column could lead to crashes. This bug has been fixed but this part has
-to be improved since it currently only provides attributes selection based on 
-the first node found.
-
-* Evidence dialog : Resizing the dialog was not properly handled resulting in 
-inappropriate widgets size.
-
-* Taskmanager : there was a typo error which led to the unavailability of the 
-results of modules
-
-* Menu : Opening folders in a new tab did not work properly.
+* taskmanager : 
+        - Time of process not yet run is now set to 0.
+        - When a script or module as finish executing the state will be set to 'finished' even if it's a graphical module
+with an opened window. 
 
   Modules:
   --------
 
+* FATFS : 
+        - Conversion of filename to UTF-8, speed optimization 
+        - More detailled attribute
+        - Fix for time in usecond who was not set to 0 but was random
+
 * NTFS : 
-  - Add a NULL pointer check forgotten prior to MFT entry header validation 
-  - Fixes an integer overflow in attributes analysis. This second fix adjusts
-    regular items detected as deleted ones.
+        - Support UTF-8 filename
+        - Close of vfile
+        - Memory leaks
+        - Add option to not check for deleted and orphan files
+        - Crash when MFT was not found 
+        - Infinite looop in deleted item
+        - Adds timestamps from $FILENAME attribute in each NTFS node.
 
-* Carver :
-   - Previous version of the carver worked with wildcard but this feature has
-     been temporary disabled because there was a bug in the old search API. 
-   - The module is currently rewritten to be compliant with the new search API
-     and to provide more accurate results.
+* FUSE : 
+        - Now run in background mode
+        - Use one thread
 
-* Load : Arguments were not properly obtained because they differ from those 
-defined in the configuration resulting in errors when using the module.
+* EWF : Speed improvement
 
-* Viewer Hexadecimal : 
-  - Slider operations are now implemented in pixel and string view
-  - It's now possible to trigger the cursor or its area to navigate within the
-    page view.
-  - QGraphicsView is now instantiated with parent widget 
+* PFF:
+        - Fix bug when parsing attributes of attached item attributes
+        - Set subject as node name
 
-* Hash : When several hash algorithms were provided, they were processed in 
-serial way. They are now processed in parallel, digests are updated for each 
-read buffer.
+* EXTFS:
+        - Add slack's nodesd and an option to chose to display them
+        - Fix a bug that prevented file names to be parsed properly
+        - Fix some memory leaks
 
-* Partition : 
-  - Fix an overflow with total_blocks resulting in bad size settings. 
-  - FileMapping are better handled and manages odd cases such as file having
-    less sectors than defined in partition entry.
+* carver: 
+        - Use the new search API
+        - Fix problem with footer size
+        - The start button is now greyed when it's unusable
 
-* Player : Fixes a bug based on phonon when opening multiple audio source. It 
-seems Phonon can only handle one audio stream at a time.
+* metaexif : Use the PIL library to extract metadata 
 
-  API:
-  ----
+* extract :
+        - Fix unicode encoding problem that lead to not extract some files
+        - Some forbidden character and filename are now renamed to be able to be created on some file system.
 
-* Attributes : Fixes memory leak due to ownership of objects return from the API
-to Python.
+* timeline :
+        - Fix for node with bad time attribute like 0000-00-00 00:00:00.
 
-* DataType : Fixes multi-thread concurrent access crash by locking in the right 
-places.
