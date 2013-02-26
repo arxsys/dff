@@ -777,6 +777,19 @@ set(API_EVENT_VERSION "1.0.0")
 #### Project install for windows
 IF(WIN32 AND NOT UNIX)
   SET(CPACK_SET_DESTDIR "OFF")
+
+  IF(CMAKE_CL_64)
+	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
+	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} 64-bit")
+	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} 64-bit")
+	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework 64-bit")
+  ELSE(CMAKE_CL_64)
+	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
+	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework")
+  ENDIF(CMAKE_CL_64)
+  
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
 	DESTINATION ${CMAKE_PROJECT_NAME}
 	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
@@ -793,12 +806,11 @@ IF(WIN32 AND NOT UNIX)
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ)
 
   SET(CPACK_MONOLITHIC_INSTALL "ON")
-	
+  
   SET(CPACK_PACKAGE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\ressources\\\\arxsys.bmp")
   SET(CPACK_BUNDLE_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\ressources\\\\arxsys.bmp")
   SET(CPACK_NSIS_MUI_ICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\ressources\\\\dff.ico")
   SET(CPACK_NSIS_MUI_UNIICON "${CMAKE_CURRENT_SOURCE_DIR}\\\\ressources\\\\dff.ico")
-  SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework")
   SET(CPACK_NSIS_HELP_LINK "http://www.digital-forensic.org/")
   SET(CPACK_NSIS_URL_INFO_ABOUT "http://www.arxsys.fr/")
   SET(CPACK_NSIS_CONTACT "contact@arxsys.fr")
@@ -808,25 +820,24 @@ IF(WIN32 AND NOT UNIX)
   
   SET(NSIS_GET_32_BITS_PATHES
 	"
-    !include \\\"x64.nsh\\\"
+        !include \\\"x64.nsh\\\"
 	Var /GLOBAL pypath
 	Var /GLOBAL pyqtpath
 	Var /GLOBAL py_hkcu_path
 	Var /GLOBAL py_hklm_path
-	
+
 	StrCpy \\\$pypath \\\"\\\"
 	StrCpy \\\$py_hkcu_path \\\"\\\"
 	StrCpy \\\$py_hklm_path \\\"\\\"
 	StrCpy \\\$pyqtpath \\\"\\\"
-	
-	ReadRegStr \\\$py_hkcu_path HKCU \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+    
 	\\\${If} \\\${RunningX64}
-		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
-		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\Wow6432Node\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
-	\\\${Else}
-		ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
-		ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
+		SetRegView 64
 	\\\${EndIf}
+		
+	ReadRegStr \\\$py_hkcu_path HKCU \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+	ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
+	ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
 	\\\${If} \\\$py_hklm_path != \\\"\\\"
 		StrCpy \\\$pypath \\\$py_hklm_path
 	\\\${Else}
@@ -849,6 +860,11 @@ IF(WIN32 AND NOT UNIX)
 
   SET(NSIS_DEFAULT_LABELS
     "
+	!include \\\"x64.nsh\\\"
+	\\\${If} \\\${RunningX64}
+		SetRegView 64
+	\\\${EndIf}
+	
     inst:
 	    Var /GLOBAL installed_version
 		StrCpy \\\$installed_version \\\"\\\"
@@ -889,10 +905,18 @@ IF(WIN32 AND NOT UNIX)
 	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
 	"
     SetOutPath \\\"$INSTDIR\\\\dff\\\"
-    CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-	CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-    CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-    CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	!include \\\"x64.nsh\\\"
+	\\\${If} \\\${RunningX64}
+	    CreateShortCut \\\"$DESKTOP\\\\DFF (64-bit shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bit gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework 64-bit\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework 64-bit\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	\\\${Else}
+		CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+		CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	\\\${EndIf}
     "
 	)
 	
@@ -926,11 +950,11 @@ IF(WIN32 AND NOT UNIX)
     message(STATUS "numpy installer: ${NUMPY_INSTALLER}")
     message(STATUS "matplotlib installer: ${MATPLOTLIB_INSTALLER}")
     message(STATUS "PIL installer: ${PIL_INSTALLER}")
-    if (WIN32)
-      SET(CPACK_SYSTEM_NAME "win32_all_in_one")
-    else(WIN32)
+    IF(CMAKE_CL_64)
       SET(CPACK_SYSTEM_NAME "win64_all_in_one")
-    endif(WIN32)
+    ELSE(CMAKE_CL_64)
+      SET(CPACK_SYSTEM_NAME "win32_all_in_one")
+    ENDIF(CMAKE_CL_64)
 	SET(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	${NSIS_DEFAULT_LABELS}
 	"
