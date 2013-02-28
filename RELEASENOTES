@@ -14,69 +14,103 @@ Features:
   ----------------
 
 * Node browser : 
-        - The browser is now UTF-8 aware, so it means that characters of file name and directory will be readable in any languages. 
-        - You can use the arrow icon near the foldername in the treeview to display the content of a directory and its subdirectories (recursively).
+        - The browser is now UTF-8 aware, so it means that characters of file 
+name and directory will be readable in any languages. 
+        - You can use the arrow icon near the foldername in the treeview to 
+display the content of a directory and its subdirectories (recursively).
         - You can now tag nodes
         - You can now filter nodes
-        - The menu of the search panel was entirely rewritten and is much more easy to use now
-        - You can now easily create attribute list and dynamically change column
+        - The menu of the search panel was entirely rewritten and is much more
+ easy to use now
+        - You can now easily create attribute list and dynamically change 
+column
         - Video have thumbnail
-        - A blue icon with a blue '+' now appears on top of node which created children (Has a module applied on it).
-        - A new icon which looks like a 'link' now appears on top of nodes which is a VFS link to an other node. You can double-click on it to be redirected to the linked node.
-        - A new root icon called "modules root" gives shortcut to all nodes which have created children.
-        - A new check box system is in place to select files you want to bookmark or do another operations on them. You can also use the right button menu to select/deselect your choices.
+        - A blue icon with a blue '+' now appears on top of node which created
+children (Has a module applied on it).
+        - A new icon which looks like a 'link' now appears on top of nodes 
+which is a VFS link to an other node. You can double-click on it to be 
+redirected to the linked node.
+        - A new root icon called "modules root" gives shortcut to all nodes 
+which have created children.
+        - A new check box system is in place to select files you want to 
+bookmark or do another operations on them. You can also use the right button 
+menu to select/deselect your choices.
         - The path bar has now a button and an edit mode 
 
-* batch : Now DFF shell command in batch must be preceeded by : ! , other commands will be interepreted as python code. So you can merge DFF commands and python in a batch script. Comment line starting with # will no longer be printed as you can use the python print function directly. When using it with python think to launch DFF in '-d'debug mode ('-d') to have the output redirected.
+* batch : Now DFF shell command in batch must be preceeded by : ! , other 
+commands will be interepreted as python code. So you can merge DFF commands 
+and python in a batch script. Comment line starting with # will no longer be 
+printed as you can use the python print function directly. When using it with 
+python think to launch DFF in '-d'debug mode ('-d') to have the output 
+redirected
 
-* preview widget : You can now disable preview by clicking the check box on the top of the widget. This can fasten the browsing of files with the keyboard arrow in the node browser as the preview menu doesn't need to update each time a file is selected.
+* preview widget : You can now disable preview by clicking the check box on 
+the top of the widget. This can fasten the browsing of files with the keyboard
+arrow in the node browser as the preview menu doesn't need to update each time
+a file is selected
 
   Modules:
   --------
 
-* Compound : Parse and extract content of compound documents : MS office document before 2010, MSI, thumbs.db, ...
-This module also has specific functionallity for MS office document. It can extract metadata for document and sub document streams contained in the archive. It can also extracts pictures embedded in datastream, WordDocument stream (.doc) and Pictures stream (.ppt).
+* Compound : Parse and extract content of compound documents : MS 
+office document before 2010, MSI, thumbs.db, ...
+This module also has specific functionallity for MS office document. 
+It can extract metadata for document and sub document streams contained in the
+archive. It can also extracts pictures embedded in datastream, WordDocument
+stream (.doc) and Pictures stream (.ppt)
 
 * Prefetch : Extract metadata of prefetch file (.pf)
  
 * Lnk : Extract metadata of link file (.lnk)
 
-* Text: Module has been enhanced to let you choose the encoding of the document you are reading
+* Text: Module has been enhanced to let you choose the encoding of the
+document you are reading
 
-* Video thumbnail viewer : It displays 10 thumbnails of a video (generated each 10%).
+* Video thumbnail viewer : It displays 10 thumbnails of a video
+(generated each 10%)
 
-* Devices : For linux now devices modules can be built to use libudev rather than dbus and HAL. 
+* Devices : For linux now devices modules can be built to use libudev rather
+than dbus and HAL
 
-* Registry : The registry modules is now based on pyregfi. You can choose to simply execute the module then use the viewer to view the content of gathered hives or you can choose to extract content directly in DFF tree by specfying option.
+* Registry : The registry modules is now based on pyregfi. You can choose to
+simply execute the module then use the viewer to view the content of gathered
+hives or you can choose to extract content directly in DFF tree by specfying
+option
 
-* Registry viewer : A regedit like viewer to browse registry content.
+* Registry viewer : A regedit like viewer to browse registry content
 
 * hash :
         - The module can now tag nodes by using a hash set (One hash per line)
         - It can detect hash set base type (md5, sha1, ...) automatically
         - You can specify a maximum size of file to be hashed
-        - You can specify a cache limit where files will not be cached but results will be obtained dynamically. (To use less memory when there is a very large amount of files to hash).
+        - You can specify a cache limit where files will not be cached but
+results will be obtained dynamically. (To use less memory when there is a very
+large amount of files to hash)
 
   API:
   ----
 
-* Variant : Variant are now reference counted in C++. You must use variant_p to declare you variant as refcounted. 
+* Variant : Variant are now reference counted in C++. You must use variant_p
+to declare you variant as refcounted
 
 * VFS : 
-        - A cache template was created and used for fileMapping, vfile, and attribute. 
-        - A refcount template was added.
-        - A tag manager was added to the API, the ability to tag node node.setTag("malware"), search and filter by tags
+        - A cache template was created and used for fileMapping, vfile, and
+attribute
+        - A refcount template was added
+        - A tag manager was added to the API, the ability to tag node
+node.setTag("malware"), search and filter by tags
 
 * Search : 
-  	- You can now search keyword entered in a dictionary (file).
+  	- You can now search keyword entered in a dictionary (file)
         - Syntax has been enhanced and supports more keywords
 	- You can dynamically created alias for too long attributes
 
   Build:
   ------
-* GIT : The achitecture has changed. Now it's subdivised in several submodules.
+* GIT : The achitecture has changed. Now it's subdivised in several submodules
 
-* Launch permission : It's now possible to directly launch DFF as administrator by right-clicking on the desktop link on Windows.
+* Launch permission : It's now possible to directly launch DFF as administrator
+by right-clicking on the desktop link on Windows
 
 Bug Fixes :
 -----------
@@ -86,8 +120,8 @@ Bug Fixes :
 
 * taskmanager : 
         - Time of process not yet started is now set to 0.
-        - When a script or module has finished its execution the state will be set to 'finished' even if it's a graphical module
-with an opened window. 
+        - When a script or module has finished its execution the state will be
+set to 'finished' even if it's a graphical module with an opened window
 
   Modules:
   --------
@@ -104,7 +138,7 @@ with an opened window.
         - Adds option to not check for deleted and orphan files
         - Crashes when MFT was not found 
         - Infinite loop on deleted items
-        - Adds timestamps from $FILENAME attributes for each NTFS nodes.
+        - Adds timestamps from $FILENAME attributes for each NTFS nodes
 
 * FUSE : 
         - Now run in background mode
@@ -130,8 +164,9 @@ with an opened window.
 
 * extract :
         - Fix unicode encoding problem that lead to not extract some files
-        - Some forbidden character and filename are now renamed to be able to be created on some file system.
+        - Some forbidden character and filename are now renamed to be able to
+be created on some file system
 
 * timeline :
-        - Fix for nodes with bad time attribute like 0000-00-00 00:00:00.
+        - Fix for nodes with bad time attribute like 0000-00-00 00:00:00
 
