@@ -778,17 +778,17 @@ set(API_EVENT_VERSION "1.0.0")
 IF(WIN32 AND NOT UNIX)
   SET(CPACK_SET_DESTDIR "OFF")
 
-  IF(CMAKE_CL_64)
+  if(HAVE_64_BIT)
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
 	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} 64-bit")
 	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} 64-bit")
 	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework 64-bit")
-  ELSE(CMAKE_CL_64)
+  else()
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
 	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
 	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
 	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework")
-  ENDIF(CMAKE_CL_64)
+  endif()
   
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
 	DESTINATION ${CMAKE_PROJECT_NAME}
@@ -817,10 +817,42 @@ IF(WIN32 AND NOT UNIX)
   SET(CPACK_NSIS_MODIFY_PATH OFF)
   SET(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
   SET(CPACK_GENERATOR "NSIS")
-  
-  SET(NSIS_GET_32_BITS_PATHES
+
+
+  set(NSIS_HEADERS
 	"
+	!include \\\"LogicLib.nsh\\\"
         !include \\\"x64.nsh\\\"
+	")
+
+  if(HAVE_64_BIT)
+    set(NSIS_TARGET_PLATFORM
+	"
+	Var /GLOBAL target_platform
+	!define regview 64
+	StrCpy \\\$target_platform \\\"64\\\"
+	")
+  else()
+    set(NSIS_TARGET_PLATFORM
+	"
+	Var /GLOBAL target_platform
+	!define regview 32
+	StrCpy \\\$target_platform \\\"32\\\"
+	")
+  endif()
+
+  set(NSIS_CHECK_PLATFORM_COMPAT
+	"
+	\\\${IfNot} \\\${RunningX64}
+		\\\${If} \\\$target_platform == \\\"64\\\"
+			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"This version only works on 64 bits platform. Please install 32 bits version\\\"
+			Goto done
+		\\\${EndIf}
+	\\\${EndIf}
+	")
+
+  set(NSIS_PYTHON_PYQT_REGKEYS
+	"
 	Var /GLOBAL pypath
 	Var /GLOBAL pyqtpath
 	Var /GLOBAL py_hkcu_path
@@ -830,14 +862,13 @@ IF(WIN32 AND NOT UNIX)
 	StrCpy \\\$py_hkcu_path \\\"\\\"
 	StrCpy \\\$py_hklm_path \\\"\\\"
 	StrCpy \\\$pyqtpath \\\"\\\"
-    
 	\\\${If} \\\${RunningX64}
-		SetRegView 64
+		SetRegView \\\${regview}
 	\\\${EndIf}
-		
 	ReadRegStr \\\$py_hkcu_path HKCU \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 	ReadRegStr \\\$py_hklm_path HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
 	ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\\InstallPath\\\" \\\"\\\"
+
 	\\\${If} \\\$py_hklm_path != \\\"\\\"
 		StrCpy \\\$pypath \\\$py_hklm_path
 	\\\${Else}
@@ -845,53 +876,81 @@ IF(WIN32 AND NOT UNIX)
 	\\\${EndIf}
 	"
 	)
+
+  set(NSIS_CHECK_PYTHON_PYQT_INSTALLED
+	"
+	\\\${If} \\\$pypath == \\\"\\\"
+		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+		Goto done
+	\\\${Else}
+		Goto pyqt_check
+	\\\${EndIf}
+	pyqt_check:
+		\\\${If} \\\$pyqtpath == \\\"\\\"
+			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+			Goto done
+		\\\${Else}
+			Goto inst
+		\\\${EndIf}
+	")
+
+  set(NSIS_DFF_REGKEYS
+	"
+	Var /GLOBAL version32
+	Var /GLOBAL version64
+	Var /GLOBAL uninstall32
+	Var /GLOBAL uninstall64
+	Var /GLOBAL installed_version
+	Var /GLOBAL uninstall_target
+
+        StrCpy \\\$version32 \\\"\\\"
+        StrCpy \\\$version64 \\\"\\\"
+        StrCpy \\\$uninstall32 \\\"\\\"
+        StrCpy \\\$uninstall64 \\\"\\\"
+	StrCpy \\\$installed_version \\\"\\\"
+	StrCpy \\\$uninstall_target \\\"\\\"
 	
-  SET(NSIS_GET_64_BITS_PATHES
-	"
-	Var /GLOBAL pypath
-	Var /GLOBAL pyqtpath
-
-	StrCpy \\\$pypath \\\"\\\"
-	StrCpy \\\$pyqtpath \\\"\\\"
-	ReadRegStr \\\$pyqtpath HKLM \\\"SOFTWARE\\\\PyQt4\\\\Py2.7\\\" \\\"\\\"
-	ReadRegStr \\\$pypath HKLM \\\"SOFTWARE\\\\Python\\\\PythonCore\\\\2.7\\\\InstallPath\\\" \\\"\\\"
-	"
-	)
-
-  SET(NSIS_DEFAULT_LABELS
-    "
-	!include \\\"x64.nsh\\\"
 	\\\${If} \\\${RunningX64}
 		SetRegView 64
+		ReadRegStr \\\$version64 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"DisplayVersion\\\"
+		ReadRegStr \\\$uninstall64 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"UninstallString\\\"
 	\\\${EndIf}
-	
-    inst:
-	    Var /GLOBAL installed_version
-		StrCpy \\\$installed_version \\\"\\\"
+	SetRegView 32
+	ReadRegStr \\\$version32 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"DisplayVersion\\\"
+	ReadRegStr \\\$uninstall32 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"UninstallString\\\"
 
-		ReadRegStr \\\$R0 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"DisplayVersion\\\"
-		ReadRegStr \\\$R1 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"UninstallString\\\"
-		\\\${If} \\\$R0 != \\\"\\\"
-			StrCpy \\\$installed_version \\\$R0
-		\\\${ElseIf} \\\$R1 != \\\"\\\"
-			StrCpy \\\$installed_version \\\$R1
+	\\\${If} \\\$target_platform == \\\"64\\\"
+		\\\${If} \\\$version64\\\ != \\\"\\\"
+			StrCpy \\\$installed_version \\\$version64
+			StrCpy \\\$uninstall_target \\\$uninstall64			
 		\\\${EndIf}
-        \\\${If} \\\$installed_version != \\\"\\\"
+	\\\${Else}
+		\\\${If} \\\$version32 != \\\"\\\"
+			StrCpy \\\$installed_version \\\$version32
+			StrCpy \\\$uninstall_target \\\$uninstall32
+		\\\${Endif}
+	\\\${EndIf}
+	")
+
+  set(NSIS_DFF_INSTALL
+	"
+	inst:
+		\\\${If} \\\$installed_version != \\\"\\\"
 			MessageBox MB_YESNO|MB_ICONQUESTION \\\"DFF version \\\$installed_version is already installed.\\\$\\\\n\\\$\\\\nClick 'YES' to uninstall it first, or 'NO' to overwrite already installed version.\\\" IDYES uninst
 			Goto done
 		\\\${Else}
-			Goto cont		
-        \\\${EndIf}
+			Goto cont
+		\\\${EndIf}
 
-    end_with_errors:
-        MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Error uninstalling DFF version \\\$R0.\\\"	    
+	end_with_errors:
+		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Error uninstalling DFF version \\\$installed_version.\\\"
 		Goto cont
 
 	uninst:
-        ClearErrors
-        ExecWait '$R1 _?=$INSTDIR'
-        IfErrors end_with_errors
-	    MessageBox MB_OK|MB_ICONINFORMATION \\\"Uninstalling previous DFF version \\\$R0 done, continue with install.\\\"
+		ClearErrors
+		ExecWait '$uninstall_target _?=$INSTDIR'
+		IfErrors end_with_errors
+			MessageBox MB_OK|MB_ICONINFORMATION \\\"Uninstalling previous DFF version \\\$installed_version done, continue with install.\\\"
 		Goto cont
 
 	cont:
@@ -902,12 +961,11 @@ IF(WIN32 AND NOT UNIX)
 	"
 	)
 	
-	SET(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
 	"
-    SetOutPath \\\"$INSTDIR\\\\dff\\\"
-	!include \\\"x64.nsh\\\"
-	\\\${If} \\\${RunningX64}
-	    CreateShortCut \\\"$DESKTOP\\\\DFF (64-bit shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+	SetOutPath \\\"$INSTDIR\\\\dff\\\"
+	\\\${If} \\\$target_platform == \\\"64\\\"
+		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bit shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
 		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bit gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework 64-bit\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework 64-bit\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
@@ -917,8 +975,7 @@ IF(WIN32 AND NOT UNIX)
 		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 		CreateShortCut \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 	\\\${EndIf}
-    "
-	)
+	")
 	
 #	# *.pyc files are not deleted by installer, because they are created at
 #	# runtime. So, below, we force deletion of those files.
@@ -929,17 +986,25 @@ IF(WIN32 AND NOT UNIX)
 	  Delete \\\"$INSTDIR\\\\dff\\\\${pyc_file}\\\""
 	)
     endforeach (pyc_file ${pyc_list})
-  
-	SET(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-    "
-	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	 Delete \\\"$DESKTOP\\\\DFF (shell).lnk\\\"
-	 Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
-	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\"
-	 Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\"
+
+  #XXX enhance this feature to work on 64 bits installation too !
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
 	"
-	)
-	
+	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+	Delete \\\"$DESKTOP\\\\DFF (shell).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (shell).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\Digital Forensics Framework\\\\DFF (gui).lnk\\\"
+	")
+
+
+  # Common parts of CPACK_NSIS_FULL_INSTALL 
+  set(CPACK_NSIS_FULL_INSTALL 
+    ${CPACK_NSIS_FULL_INSTALL}
+    ${NSIS_HEADERS}
+    ${NSIS_TARGET_PLATFORM}
+    ${NSIS_CHECK_PLATFORM_COMPAT}
+    )	
 	
   if (WINALL)
     add_subdirectory (prerequisites)
@@ -950,82 +1015,79 @@ IF(WIN32 AND NOT UNIX)
     message(STATUS "numpy installer: ${NUMPY_INSTALLER}")
     message(STATUS "matplotlib installer: ${MATPLOTLIB_INSTALLER}")
     message(STATUS "PIL installer: ${PIL_INSTALLER}")
-    IF(CMAKE_CL_64)
-      SET(CPACK_SYSTEM_NAME "win64_all_in_one")
-    ELSE(CMAKE_CL_64)
-      SET(CPACK_SYSTEM_NAME "win32_all_in_one")
-    ENDIF(CMAKE_CL_64)
-	SET(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
-	${NSIS_DEFAULT_LABELS}
+    if(HAVE_64_BIT)
+      set(CPACK_SYSTEM_NAME "win64_all_in_one")
+    else()
+      set(CPACK_SYSTEM_NAME "win32_all_in_one")
+    endif()
+    
+    set(CPACK_NSIS_FULL_INSTALL
+	${CPACK_NSIS_FULL_INSTALL}
 	"
-    MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
-    ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
-    Goto InstPyQt
-    InstPyQt:
-        MessageBox MB_YESNO \\\"Install ${PYQT_INSTALLER} ? \\\" /SD IDYES IDNO InstAPSW
-        ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYQT_INSTALLER}\\\"'
-        Goto InstAPSW
-    InstAPSW:
-	MessageBox MB_YESNO \\\"Install ${APSW_INSTALLER}? \\\" /SD IDYES IDNO InstPil
-	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${APSW_INSTALLER}\\\"'
-	Goto InstPil
-    InstPil:
-	MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO InstVcredist
-	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PIL_INSTALLER}\\\"'
-	Goto InstVcredist
+	MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
+	ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
+	Goto InstPyQt
+	InstPyQt:
+		MessageBox MB_YESNO \\\"Install ${PYQT_INSTALLER} ? \\\" /SD IDYES IDNO InstAPSW
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYQT_INSTALLER}\\\"'
+		Goto InstAPSW
+	InstAPSW:
+		MessageBox MB_YESNO \\\"Install ${APSW_INSTALLER}? \\\" /SD IDYES IDNO InstPil
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${APSW_INSTALLER}\\\"'
+		Goto InstPil
+	InstPil:
+		MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO InstVcredist
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PIL_INSTALLER}\\\"'
+		Goto InstVcredist
 	")
     if (BUILD_UNSUPPORTED)
       set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	"
-    InstVcredist:
-	MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstNumpy
-        ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
-	Goto InstNumpy
-    InstNumpy:
-	MessageBox MB_YESNO \\\"Install ${NUMPY_INSTALLER}? \\\" /SD IDYES IDNO InstMatplotlib
-	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
-	Goto InstMatplotlib
-    IntMatplotlib:
-	MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO InstEnd
-	ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
-	Goto InstEnd
+	InstVcredist:
+		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstNumpy
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+		Goto InstNumpy
+	InstNumpy:
+		MessageBox MB_YESNO \\\"Install ${NUMPY_INSTALLER}? \\\" /SD IDYES IDNO InstMatplotlib
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
+		Goto InstMatplotlib
+	IntMatplotlib:
+		MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO InstEnd
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
+		Goto InstEnd
 	")
     else()
       set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	"
-    InstVcredist:
-	MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstEnd
-        ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
-	Goto InstEnd
-	")      
+	InstVcredist:
+		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstEnd
+		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+		Goto InstEnd
+	")
     endif()
-          set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
-	    "
-    InstEnd:
-       RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"	
-    " ${NSIS_GET_32_BITS_PATHES})
+
+    set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
+	"
+	InstEnd:
+		RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"	
+        " 
+	${NSIS_PYTHON_PYQT_REGKEYS}
+	${NSIS_DFF_REGKEYS}
+	${NSIS_DFF_INSTALL}
+	)
+
   else(WINALL)
-	if (HAVE_64_BIT)
-	else()
-		SET(CPACK_NSIS_FULL_INSTALL ${NSIS_GET_32_BITS_PATHES}
-		"
-		\\\${If} \\\$pypath == \\\"\\\"
-			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-			Goto done
-		\\\${Else}
-			Goto pyqt_check
-		\\\${EndIf}
-		pyqt_check:
-			\\\${If} \\\$pyqtpath == \\\"\\\"
-				MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 32 bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-				Goto done
-			\\\${Else}
-				Goto inst
-			\\\${EndIf}
-		"
-		${NSIS_DEFAULT_LABELS}
-		)
-	endif()
+    if(HAVE_64_BIT)
+      set(CPACK_SYSTEM_NAME "win64")
+    else()
+      set(CPACK_SYSTEM_NAME "win32")
+    endif()
+    set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
+	${NSIS_PYTHON_PYQT_REGKEYS}
+	${NSIS_DFF_REGKEYS}
+	${NSIS_CHECK_PYTHON_PYQT_INSTALLED}
+	${NSIS_DFF_INSTALL}
+      )
   endif(WINALL)
   SET(CPACK_SOURCE_GENERATOR "ZIP")
   
