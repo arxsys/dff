@@ -774,6 +774,7 @@ set(API_VFS_VERSION "2.7.0")
 set(API_DATATYPE_VERSION "1.0.0")
 set(API_EVENT_VERSION "1.0.0")
 
+
 #### Project install for windows
 IF(WIN32 AND NOT UNIX)
   SET(CPACK_SET_DESTDIR "OFF")
@@ -781,12 +782,12 @@ IF(WIN32 AND NOT UNIX)
   if(HAVE_64_BIT)
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
 	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} 64-bit")
-	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION} 64-bit")
+	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "dff")
 	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework 64-bit")
   else()
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
 	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "${CPACK_PACKAGE_NAME} ${CPACK_PACKAGE_VERSION}")
+	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "dff")
 	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework")
   endif()
   
@@ -881,14 +882,14 @@ IF(WIN32 AND NOT UNIX)
 	"
 	\\\${If} \\\$pypath == \\\"\\\"
 		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-		Goto done
+		Abort
 	\\\${Else}
 		Goto pyqt_check
 	\\\${EndIf}
 	pyqt_check:
 		\\\${If} \\\$pyqtpath == \\\"\\\"
 			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
-			Goto done
+			Abort
 		\\\${Else}
 			Goto inst
 		\\\${EndIf}
@@ -930,7 +931,6 @@ IF(WIN32 AND NOT UNIX)
 			StrCpy \\\$uninstall_target \\\$uninstall32
 		\\\${Endif}
 	\\\${EndIf}
-	Goto inst
 	")
 
   set(NSIS_DFF_INSTALL
@@ -955,7 +955,7 @@ IF(WIN32 AND NOT UNIX)
 		Goto cont
 
 	cont:
-		File /r \\\"\\\${INST_DIR}\\\\*.*\\\"
+		File /r /x \\\"prerequisites\\\" \\\"\\\${INST_DIR}\\\\*.*\\\"
 	
 	done:
 		
@@ -1025,22 +1025,29 @@ IF(WIN32 AND NOT UNIX)
     set(CPACK_NSIS_FULL_INSTALL
 	${CPACK_NSIS_FULL_INSTALL}
 	${NSIS_DFF_REGKEYS}
-	${NSIS_DFF_INSTALL}
 	"
 	MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
-	ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
+	File \\\"/oname=$TEMP\\\\${PYTHON_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${PYTHON_INSTALLER}\\\"
+	ExecWait '\\\"msiexec\\\" /i \\\"$TEMP\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
+	Delete \\\"$TEMP\\\\${PYTHON_INSTALLER}\\\"
 	Goto InstPyQt
 	InstPyQt:
 		MessageBox MB_YESNO \\\"Install ${PYQT_INSTALLER} ? \\\" /SD IDYES IDNO InstAPSW
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYQT_INSTALLER}\\\"'
+		File \\\"/oname=$TEMP\\\\${PYQT_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${PYQT_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${PYQT_INSTALLER}\\\"'
+		Delete \\\"$TEMP\\\\${PYQT_INSTALLER}\\\"
 		Goto InstAPSW
 	InstAPSW:
 		MessageBox MB_YESNO \\\"Install ${APSW_INSTALLER}? \\\" /SD IDYES IDNO InstPil
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${APSW_INSTALLER}\\\"'
+		File \\\"/oname=$TEMP\\\\${APSW_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${APSW_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${APSW_INSTALLER}\\\"'
+		Delete \\\"$TEMP\\\\${APSW_INSTALLER}\\\"
 		Goto InstPil
 	InstPil:
 		MessageBox MB_YESNO \\\"Install ${PIL_INSTALLER}? \\\" /SD IDYES IDNO InstVcredist
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PIL_INSTALLER}\\\"'
+		File \\\"/oname=$TEMP\\\\${PIL_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${PIL_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${PIL_INSTALLER}\\\"'
+		Delete \\\"$TEMP\\\\${PIL_INSTALLER}\\\"
 		Goto InstVcredist
 	")
     if (BUILD_UNSUPPORTED)
@@ -1048,33 +1055,39 @@ IF(WIN32 AND NOT UNIX)
 	"
 	InstVcredist:
 		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstNumpy
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+		File \\\"/oname=$TEMP\\\\${VCREDIST_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${VCREDIST_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+		Delete \\\"$TEMP\\\\${VCREDIST_INSTALLER}\\\"
 		Goto InstNumpy
 	InstNumpy:
 		MessageBox MB_YESNO \\\"Install ${NUMPY_INSTALLER}? \\\" /SD IDYES IDNO InstMatplotlib
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${NUMPY_INSTALLER}\\\"'
+		File \\\"/oname=$TEMP\\\\${NUMPY_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${NUMPY_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${NUMPY_INSTALLER}\\\"'
+		Delete \\\"$TEMP\\\\${NUMPY_INSTALLER}\\\"
 		Goto InstMatplotlib
 	IntMatplotlib:
-		MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO InstEnd
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"'
-		Goto InstEnd
+		MessageBox MB_YESNO \\\"Install ${MATPLOTLIB_INSTALLER}? \\\" /SD IDYES IDNO
+		File \\\"/oname=$TEMP\\\\${MATPLOTLIB_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${MATPLOTLIB_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${MATPLOTLIB_INSTALLER}\\\"'
+		Delete \\\"$TEMP\\\\${MATPLOTLIB_INSTALLER}\\\"
 	")
     else()
       set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
 	"
 	InstVcredist:
-		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO InstEnd
-		ExecWait '\\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${VCREDIST_INSTALLER}\\\" /q:a'
-		Goto InstEnd
+		MessageBox MB_YESNO \\\"Install Microsoft Visual Studio DLL dependencies ? \\\" /SD IDYES IDNO
+		File \\\"/oname=$TEMP\\\\${VCREDIST_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${VCREDIST_INSTALLER}\\\"
+		ExecWait '\\\"$TEMP\\\\${VCREDIST_INSTALLER}\\\" /q:a'
+		Delete \\\"$TEMP\\\\${VCREDIST_INSTALLER}\\\"
 	")
     endif()
 
     set(CPACK_NSIS_FULL_INSTALL ${CPACK_NSIS_FULL_INSTALL}
-	"
-	InstEnd:
-		RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"	
-        " 
 	${NSIS_PYTHON_PYQT_REGKEYS}
+	"
+	Goto inst
+	"
+	${NSIS_DFF_INSTALL}
 	)
 
   else(WINALL)
