@@ -838,14 +838,13 @@ IF(WIN32 AND NOT UNIX)
 	)
     endforeach (pyc_file ${pyc_list})
 
-  #XXX enhance this feature to work on 64 bits installation too !
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
 	"
 	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	Delete \\\"$DESKTOP\\\\DFF (shell).lnk\\\"
-	Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF \\\$target_platform bits (shell).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF \\\$target_platform bits (gui).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (shell).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (gui).lnk\\\"
 	")
 
   set(NSIS_HEADERS
