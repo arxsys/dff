@@ -930,6 +930,7 @@ IF(WIN32 AND NOT UNIX)
 			StrCpy \\\$uninstall_target \\\$uninstall32
 		\\\${Endif}
 	\\\${EndIf}
+	Goto inst
 	")
 
   set(NSIS_DFF_INSTALL
@@ -954,7 +955,7 @@ IF(WIN32 AND NOT UNIX)
 		Goto cont
 
 	cont:
-        File /r \\\"\\\${INST_DIR}\\\\*.*\\\"
+		File /r \\\"\\\${INST_DIR}\\\\*.*\\\"
 	
 	done:
 		
@@ -1023,6 +1024,8 @@ IF(WIN32 AND NOT UNIX)
     
     set(CPACK_NSIS_FULL_INSTALL
 	${CPACK_NSIS_FULL_INSTALL}
+	${NSIS_DFF_REGKEYS}
+	${NSIS_DFF_INSTALL}
 	"
 	MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
 	ExecWait '\\\"msiexec\\\" /i \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
@@ -1072,8 +1075,6 @@ IF(WIN32 AND NOT UNIX)
 		RMDir /r \\\"$INSTDIR\\\\dff\\\\Prerequisites\\\"	
         " 
 	${NSIS_PYTHON_PYQT_REGKEYS}
-	${NSIS_DFF_REGKEYS}
-	${NSIS_DFF_INSTALL}
 	)
 
   else(WINALL)
