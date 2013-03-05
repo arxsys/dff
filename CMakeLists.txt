@@ -974,7 +974,7 @@ IF(WIN32 AND NOT UNIX)
 		CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
 		CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 	\\\${EndIf}
 	")
 	
