@@ -819,6 +819,41 @@ IF(WIN32 AND NOT UNIX)
   SET(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
   SET(CPACK_GENERATOR "NSIS")
 
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
+	"
+	SetOutPath \\\"$INSTDIR\\\\dff\\\"
+	\\\${If} \\\$target_platform == \\\"64\\\"
+		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bits shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bits gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (64-bits shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (64-bits gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	\\\${Else}
+		CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+		CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	\\\${EndIf}
+	")
+	
+#	# *.pyc files are not deleted by installer, because they are created at
+#	# runtime. So, below, we force deletion of those files.
+    get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
+    foreach (pyc_file ${pyc_list})
+      set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+	"${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+	  Delete \\\"$INSTDIR\\\\dff\\\\${pyc_file}\\\""
+	)
+    endforeach (pyc_file ${pyc_list})
+
+  #XXX enhance this feature to work on 64 bits installation too !
+  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
+	"
+	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
+	Delete \\\"$DESKTOP\\\\DFF (shell).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\"
+	")
 
   set(NSIS_HEADERS
 	"
@@ -961,43 +996,6 @@ IF(WIN32 AND NOT UNIX)
 		
 	"
 	)
-	
-  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
-	"
-	SetOutPath \\\"$INSTDIR\\\\dff\\\"
-	\\\${If} \\\$target_platform == \\\"64\\\"
-		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bits shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-		CreateShortCut \\\"$DESKTOP\\\\DFF (64-bits gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (64-bits shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (64-bits gui).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-	\\\${Else}
-		CreateShortCut \\\"$DESKTOP\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-		CreateShortCut \\\"$DESKTOP\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-		CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-	\\\${EndIf}
-	")
-	
-#	# *.pyc files are not deleted by installer, because they are created at
-#	# runtime. So, below, we force deletion of those files.
-    get_property(pyc_list GLOBAL PROPERTY PYC_FILES)
-    foreach (pyc_file ${pyc_list})
-      set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-	"${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	  Delete \\\"$INSTDIR\\\\dff\\\\${pyc_file}\\\""
-	)
-    endforeach (pyc_file ${pyc_list})
-
-  #XXX enhance this feature to work on 64 bits installation too !
-  set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
-	"
-	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	Delete \\\"$DESKTOP\\\\DFF (shell).lnk\\\"
-	Delete \\\"$DESKTOP\\\\DFF (gui).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (shell).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF (gui).lnk\\\"
-	")
-
 
   # Common parts of CPACK_NSIS_FULL_INSTALL 
   set(CPACK_NSIS_FULL_INSTALL 
