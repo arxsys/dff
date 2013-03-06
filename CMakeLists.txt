@@ -780,26 +780,26 @@ IF(WIN32 AND NOT UNIX)
   SET(CPACK_SET_DESTDIR "OFF")
 
   if(HAVE_64_BIT)
+	SET(TARGET_PLATFORM "64")
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES64")
-	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY} 64-bit")
-	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "dff")
-	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework 64-bit")
   else()
+	SET(TARGET_PLATFORM "32")
 	SET(CPACK_NSIS_INSTALL_ROOT "$PROGRAMFILES")
-	SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
-	SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "dff")
-	SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework")
   endif()
+  SET(CPACK_NSIS_PACKAGE_NAME "${CPACK_PACKAGE_INSTALL_DIRECTORY}")
+  SET(CPACK_PACKAGE_INSTALL_REGISTRY_KEY "dff")
+  SET(CPACK_NSIS_DISPLAY_NAME "Digital Forensics Framework ${TARGET_PLATFORM} bits")
   
+# Install dff launchers
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
-	DESTINATION ${CMAKE_PROJECT_NAME}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	  DESTINATION ${CMAKE_PROJECT_NAME}
+	  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff-gui.py
-	DESTINATION ${CMAKE_PROJECT_NAME}
-	PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-	RENAME dff-gui.pyw)
+	  DESTINATION ${CMAKE_PROJECT_NAME}
+	  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	  RENAME dff-gui.pyw)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.ico
-    DESTINATION ${CMAKE_PROJECT_NAME}/ressources/)
+          DESTINATION ${CMAKE_PROJECT_NAME}/ressources/)
 
 # Install docs and licenses
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/README ${CMAKE_CURRENT_SOURCE_DIR}/COPYRIGHT ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE-THIRDPARTY
@@ -819,13 +819,13 @@ IF(WIN32 AND NOT UNIX)
   SET(CPACK_NSIS_COMPRESSOR "/SOLID lzma")
   SET(CPACK_GENERATOR "NSIS")
 
-  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS       
+  set(CPACK_NSIS_EXTRA_INSTALL_COMMANDS
 	"
 	SetOutPath \\\"$INSTDIR\\\\dff\\\"
-	CreateShortCut \\\"$DESKTOP\\\\DFF \\\$target_platform bits (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
-	CreateShortCut \\\"$DESKTOP\\\\DFF \\\$target_platform bits (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-	CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
-	CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	CreateShortCut \\\"$DESKTOP\\\\DFF ${TARGET_PLATFORM} bits (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\" 
+	CreateShortCut \\\"$DESKTOP\\\\DFF ${TARGET_PLATFORM} bits (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF ${TARGET_PLATFORM} bits (shell).lnk\\\" \\\"\\\$pypath\\\\python.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff.py\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
+	CreateShortCut \\\"$SMPROGRAMS\\\\DFF\\\\DFF ${TARGET_PLATFORM} bits (gui).lnk\\\" \\\"\\\$pypath\\\\pythonw.exe\\\" \\\"\\\$\\\\\\\"$INSTDIR\\\\dff\\\\dff-gui.pyw\\\$\\\\\\\"\\\" \\\"$INSTDIR\\\\dff\\\\ressources\\\\dff.ico\\\"  
 	")
 	
 #	# *.pyc files are not deleted by installer, because they are created at
@@ -841,10 +841,10 @@ IF(WIN32 AND NOT UNIX)
   set(CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS
 	"
 	${CPACK_NSIS_EXTRA_UNINSTALL_COMMANDS}
-	Delete \\\"$DESKTOP\\\\DFF \\\$target_platform bits (shell).lnk\\\"
-	Delete \\\"$DESKTOP\\\\DFF \\\$target_platform bits (gui).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (shell).lnk\\\"
-	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF \\\$target_platform bits (gui).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF ${TARGET_PLATFORM} bits (shell).lnk\\\"
+	Delete \\\"$DESKTOP\\\\DFF ${TARGET_PLATFORM} bits (gui).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF ${TARGET_PLATFORM} bits (shell).lnk\\\"
+	Delete \\\"$SMPROGRAMS\\\\DFF\\\\DFF ${TARGET_PLATFORM} bits (gui).lnk\\\"
 	")
 
   set(NSIS_HEADERS
@@ -853,26 +853,22 @@ IF(WIN32 AND NOT UNIX)
         !include \\\"x64.nsh\\\"
 	")
 
-  if(HAVE_64_BIT)
-    set(NSIS_TARGET_PLATFORM
+  if (HAVE_64_BITS)
+     set(NSIS_HEADERS ${NSIS_HEADERS}
 	"
-	Var /GLOBAL target_platform
 	!define regview 64
-	StrCpy \\\$target_platform \\\"64\\\"
 	")
   else()
-    set(NSIS_TARGET_PLATFORM
+     set(NSIS_HEADERS ${NSIS_HEADERS}
 	"
-	Var /GLOBAL target_platform
 	!define regview 32
-	StrCpy \\\$target_platform \\\"32\\\"
 	")
   endif()
 
   set(NSIS_CHECK_PLATFORM_COMPAT
 	"
 	\\\${IfNot} \\\${RunningX64}
-		\\\${If} \\\$target_platform == \\\"64\\\"
+		\\\${If} ${TARGET_PLATFORM} == \\\"64\\\"
 			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"This version only works on 64 bits platform. Please install 32 bits version\\\"
 			Abort
 		\\\${EndIf}
@@ -908,14 +904,14 @@ IF(WIN32 AND NOT UNIX)
   set(NSIS_CHECK_PYTHON_PYQT_INSTALLED
 	"
 	\\\${If} \\\$pypath == \\\"\\\"
-		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+		MessageBox MB_OK|MB_ICONEXCLAMATION \\\"Python 2.7 ${TARGET_PLATFORM} bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
 		Abort
 	\\\${Else}
 		Goto pyqt_check
 	\\\${EndIf}
 	pyqt_check:
 		\\\${If} \\\$pyqtpath == \\\"\\\"
-			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 \\\$target_platform bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
+			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"PyQt4 for Python 2.7 ${TARGET_PLATFORM} bits not found.\\\$\\\\nPlease install it before installing DFF.\\\"
 			Abort
 		\\\${Else}
 			Goto inst
@@ -947,7 +943,7 @@ IF(WIN32 AND NOT UNIX)
 	ReadRegStr \\\$version32 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"DisplayVersion\\\"
 	ReadRegStr \\\$uninstall32 HKLM \\\"Software\\\\Microsoft\\\\Windows\\\\CurrentVersion\\\\Uninstall\\\\dff\\\" \\\"UninstallString\\\"
 
-	\\\${If} \\\$target_platform == \\\"64\\\"
+	\\\${If} ${TARGET_PLATFORM} == \\\"64\\\"
 		\\\${If} \\\$version64\\\ != \\\"\\\"
 			StrCpy \\\$installed_version \\\$version64
 			StrCpy \\\$uninstall_target \\\$uninstall64			
@@ -993,7 +989,6 @@ IF(WIN32 AND NOT UNIX)
   set(CPACK_NSIS_FULL_INSTALL 
     ${CPACK_NSIS_FULL_INSTALL}
     ${NSIS_HEADERS}
-    ${NSIS_TARGET_PLATFORM}
     ${NSIS_CHECK_PLATFORM_COMPAT}
     )	
 	
@@ -1018,7 +1013,7 @@ IF(WIN32 AND NOT UNIX)
 	"
 	MessageBox MB_YESNO \\\"Install ${PYTHON_INSTALLER} ? \\\" /SD IDYES IDNO InstPyQt
 	File \\\"/oname=$TEMP\\\\${PYTHON_INSTALLER}\\\" \\\"\\\${INST_DIR}\\\\dff\\\\prerequisites\\\\${PYTHON_INSTALLER}\\\"
-	ExecWait '\\\"msiexec\\\" /i \\\"$TEMP\\\\${PYTHON_INSTALLER}\\\" /passive ALLUSERS=1'
+	ExecWait '\\\"msiexec\\\" /i \\\"$TEMP\\\\${PYTHON_INSTALLER}\\\"'
 	Delete \\\"$TEMP\\\\${PYTHON_INSTALLER}\\\"
 	Goto InstPyQt
 	InstPyQt:
@@ -1117,34 +1112,26 @@ if (UNIX)
   add_custom_target(manpage ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz)
 # Install man page
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.1.gz
-          DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/man/man1
+	  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/man/man1
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ RENAME dff.1.gz)
 # Install docs and licenses
   install(FILES README COPYRIGHT LICENSE LICENSE-THIRDPARTY
           DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/doc/${CMAKE_PROJECT_NAME}-${CPACK_PACKAGE_VERSION_MAJOR}.${CPACK_PACKAGE_VERSION_MINOR}.${CPACK_PACKAGE_VERSION_PATCH}
           PERMISSIONS OWNER_READ GROUP_READ WORLD_READ RENAME)
-# Install binary  launcher, icons, shortcuts.
-  #install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff
-  #DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin
-  #PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.png ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.xpm
-  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/pixmaps
-  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/pixmaps
+	  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/ressources/dff.desktop
-  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/applications
-  PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
+	  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/share/applications
+	  PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ WORLD_READ)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
-    DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    RENAME dff)
+	  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
+	  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	  RENAME dff)
   install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff-gui.py
-    DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
-    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
-    RENAME dff-gui)
-#else (UNIX)
-#  install(FILES ${CMAKE_CURRENT_BINARY_DIR}/dff.py
-#    DESTINATION ${PYTHON_SITE_PACKAGES_PATH}/${CMAKE_PROJECT_NAME}
-#    PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
+	  DESTINATION ${CMAKE_INSTALL_ORIG_PREFIX}/bin/
+	  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+	  RENAME dff-gui)
 endif(UNIX)
 
 INCLUDE(CPack)
