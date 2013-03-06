@@ -874,7 +874,7 @@ IF(WIN32 AND NOT UNIX)
 	\\\${IfNot} \\\${RunningX64}
 		\\\${If} \\\$target_platform == \\\"64\\\"
 			MessageBox MB_OK|MB_ICONEXCLAMATION \\\"This version only works on 64 bits platform. Please install 32 bits version\\\"
-			Goto done
+			Abort
 		\\\${EndIf}
 	\\\${EndIf}
 	")
