@@ -748,19 +748,6 @@ endif (UNIX)
 #
 # build the documentation
 #
-
-if (NOT DOCUMENTATION_INSTALL_DIR)
-  set (DOCUMENTATION_INSTALL_DIR share/doc/dff
-    CACHE PATH "Where to install generic documentation files to" FORCE)
-endif ( NOT DOCUMENTATION_INSTALL_DIR )
-mark_as_advanced (DOCUMENTATION_INSTALL_DIR)
-
-#XXX we already have a man page install and this one is not compressed
-if (NOT MANPAGE_INSTALL_DIR)
-  set (MANPAGE_INSTALL_DIR share/man CACHE PATH "Where to install manpage files to" FORCE)
-endif (NOT MANPAGE_INSTALL_DIR)
-mark_as_advanced (MANPAGE_INSTALL_DIR)
-
 add_subdirectory (doc)
 
 #### Project install
