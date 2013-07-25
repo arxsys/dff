@@ -19,15 +19,16 @@ project (dff)
 cmake_minimum_required (VERSION 2.6)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules/")
 
-## Swig
+
+## Swig We need at least version 2.0.7 of SWIG
 find_package(SWIG REQUIRED)
+if (${SWIG_VERSION_MAJOR} LESS 2 OR (${SWIG_VERSION_MAJOR} EQUAL 2 AND ${SWIG_VERSION_PATCH} LESS 7))
+  message(FATAL_ERROR "Need SWIG version >= 2.0.7 (current version is ${SWIG_VERSION})")
+else()
+  message(STATUS "Found compatible SWIG version (${SWIG_VERSION})")
+endif()
 include(${SWIG_USE_FILE})
 
-STRING (COMPARE LESS "${SWIG_VERSION}" "2.0.7" SWIGOK)
-
-if (${SWIGOK})
-  MESSAGE(FATAL_ERROR "Need SWIG version >= 2.0.7 (current version is ${SWIG_VERSION})")
-endif (${SWIGOK})
 
 set(CMAKE_INCLUDE_PATH "${INCLUDEDIR}")
 set(CMAKE_LIBRARY_PATH "${LIBDIR}")
@@ -208,45 +209,23 @@ ENDIF(WIN32)
 
 ## Python check
 FIND_PACKAGE(PythonInterp REQUIRED)
-execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_version; print(get_python_version())" OUTPUT_VARIABLE PYTHON_VERSION OUTPUT_STRIP_TRAILING_WHITESPACE)
-if (UNIX)
-  if (APPLE)
-    execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_config_vars; print(get_config_vars()[\"PYTHONFRAMEWORKPREFIX\"] + \"/\" + get_config_vars()[\"LDLIBRARY\"])" OUTPUT_VARIABLE PYTHON_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
-  else ()
-    execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_config_vars; print(get_config_vars()[\"LIBDIR\"] + \"/\" + get_config_vars()[\"LDLIBRARY\"])" OUTPUT_VARIABLE PYTHON_LIBRARIES OUTPUT_STRIP_TRAILING_WHITESPACE)
-  endif (APPLE)
-  execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())" OUTPUT_VARIABLE PYTHON_INCLUDE_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-  execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_config_vars; print(get_config_vars()[\"BINDIR\"])" OUTPUT_VARIABLE PYTHON_BIN_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
-  if(NOT PYTHON_LIBRARIES)
-    message(SEND_ERROR "No Python library found ; please install Python package, at least version 2.5.")
-  else(NOT PYTHON_LIBRARIES)
-    message(STATUS "Python library found: ${PYTHON_LIBRARIES}")
-  endif(NOT PYTHON_LIBRARIES)
-  if(NOT EXISTS ${PYTHON_INCLUDE_PATH}/Python.h)
-    message(SEND_ERROR "No Python include/header file found; install Python development package.")
-  else(NOT EXISTS ${PYTHON_INCLUDE_PATH}/Python.h)
-    message(STATUS "Python header found: ${PYTHON_INCLUDE_PATH}")
-  endif(NOT EXISTS ${PYTHON_INCLUDE_PATH}/Python.h)
-else (UNIX)
+
+if (WIN32)
   find_package(PythonLibs)
-  find_package(PythonInterp)
   SET(PYTHON_BIN_PATH ${PYTHON_EXECUTABLE})
 # FIXME for windows validate presence of Python.h in PYTHON_INCLUDE_PATH
-endif(UNIX)
-
-message(STATUS "Python in: ${PYTHON_BIN_PATH}")
-
+endif()
 
 FIND_PACKAGE(PythonLibrary REQUIRED)
-FIND_PACKAGE(PyQt4 REQUIRED)
+
+# Get Python site packages for installation target
+execute_process ( COMMAND ${PYTHON_EXECUTABLE} -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())" OUTPUT_VARIABLE PYTHON_SITE_PACKAGES_PATH OUTPUT_STRIP_TRAILING_WHITESPACE)
+
 INCLUDE(PythonMacros)
+
 IF (NOT MSVC)
   ADD_DEFINITIONS(-fPIC)
 ENDIF ()
-#FIND_PACKAGE(Qt4 REQUIRED)
-#INCLUDE(${QT_USE_FILE})
 
 if(UNIX)
 # Search for gzip program, to compress manpage for Unix
@@ -272,10 +251,11 @@ endif(UNIX)
 
 ## Python-QT bindings check
 execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import PyQt4; print PyQt4.__path__[0]" OUTPUT_VARIABLE PYTHON_QT4_PATH ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "from PyQt4 import QtCore; print QtCore.PYQT_VERSION_STR" OUTPUT_VARIABLE PYQT4_VERSION_STR ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 if(NOT PYTHON_QT4_PATH)
   message(STATUS "Python QT4 bindings not found. Not needed at build step but mandatory to start DFF.")
 else(NOT PYTHON_QT4_PATH)
-  message(STATUS "Python QT4 libraries bindings found: ${PYTHON_QT4_PATH}")
+  message(STATUS "Python QT4 libraries found: ${PYTHON_QT4_PATH} (version: ${PYQT4_VERSION_STR})")
 endif(NOT PYTHON_QT4_PATH)
 
 ## PyQt linguist transalation updater check, to create or update translation
