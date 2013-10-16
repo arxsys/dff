@@ -22,4 +22,4 @@ if (BUILD_UNSUPPORTED)
   add_subdirectory(unsupported)
 endif()
 
-install_file(__init__.py)
+install_file(__init__.py.in)
