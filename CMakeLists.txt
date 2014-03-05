@@ -19,8 +19,6 @@ cmake_minimum_required(VERSION 2.6)
 
 include("cmake_modules/dff/header.cmake")
 
-set(PROJECT_EDITION "ose")
-
 include("cmake_modules/dff/find_deps.cmake")
 include("cmake_modules/dff/macros.cmake")
 include("cmake_modules/dff/copy_deps.cmake")
