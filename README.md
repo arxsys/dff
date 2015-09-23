@@ -48,6 +48,7 @@ Amongst supported features of DFF :
 Some optional dependencies are optional and are rarely packaged on GNU/Linux distrubition. If you need associated features, you will have to install them by yourself:
 
 * The following dependencies must be installed before compilation:
+  * [Libbfio](https://github.com/libyal/libbfio) to support I/O abstraction with the following libraries
   * [Libpff](https://github.com/libyal/libpff) to support Outlook & Exchange mailboxes
   * [Libewf](https://github.com/libyal/libewf) to support EnCase forensic containers
   * [Libvshadow](https://github.com/libyal/libvshadow) to support Volume Shadow Copy
@@ -55,7 +56,7 @@ Some optional dependencies are optional and are rarely packaged on GNU/Linux dis
 * The following dependencies can be installed after compilation
   * [Pyregfi and reglookup](http://projects.sentinelchicken.org/reglookup/download/) to support Windows registry parsing
   * [Volatility](https://github.com/volatilityfoundation/volatility) to support volatile memory analyse
-  * ["Pefile"](https://github.com/erocarrera/pefile) to enhance metadata extracted from recovered binary in volatile memory
+  * [Pefile](https://github.com/erocarrera/pefile) to enhance metadata extracted from recovered binary in volatile memory
 
 
 # Install
