@@ -1,21 +1,24 @@
 [submodule "dff/api"]
-	path = dff/api
-	url = git://git.digital-forensic.org/api
+           path = dff/api
+	   url = https://github.com/arxsys/dff-api
+           branch = develop
 [submodule "dff/ui"]
-	path = dff/ui
-	url = git://git.digital-forensic.org/ui
+           path = dff/ui
+           url = https://github.com/arxsys/dff-ui
+           branch = develop
 [submodule "dff/modules"]
-	path = dff/modules
-	url = git://git.digital-forensic.org/modules
+           path = dff/modules
+           url = https://github.com/arxsys/dff-modules
+           branch = develop
 [submodule "cmake_modules"]
-	path = cmake_modules
-	url = git://git.digital-forensic.org/cmake_modules
+           path = cmake_modules
+           url = https://github.com/arxsys/dff-cmake_modules
+           branch = develop
 [submodule "doc"]
-	path = doc
-	url = git://git.digital-forensic.org/doc
+           path = doc
+           url = https://github.com/arxsys/dff-doc
+           branch = develop
 [submodule "dff/unsupported"]
-	path = dff/unsupported
-	url = git://git.digital-forensic.org/unsupported
-[submodule "prerequisites"]
-	path = prerequisites
-	url = git://git.digital-forensic.org/installdeps
+           path = dff/unsupported
+           url = https://github.com/arxsys/dff-unsupported
+           branch = develop
