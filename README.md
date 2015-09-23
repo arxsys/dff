@@ -1,6 +1,6 @@
 # Digital Forensics Framework
 
-![alt text](http://www.arxsys.fr/wp-content/uploads/2015/09/dff_logo_new_title_dark.png "Digital Forensics Framework")
+![Digital Forensics Framework](http://www.arxsys.fr/wp-content/uploads/2015/09/dff_logo_new_title_dark.png)
 
 [![Build Status](https://scan.coverity.com/projects/dff/badge.svg)](https://scan.coverity.com/projects/dff)
 
@@ -48,14 +48,14 @@ Amongst supported features of DFF :
 Some optional dependencies are optional and are rarely packaged on GNU/Linux distrubition. If you need associated features, you will have to install them by yourself:
 
 * The following dependencies must be installed before compilation:
-  * (https://github.com/libyal/libpff "libpff") to support Outlook & Exchange mailboxes
-  * (https://github.com/libyal/libewf "libewf") to support EnCase forensic containers
-  * (https://github.com/libyal/libvshadow "libvshadow") to support Volume Shadow Copy
+  * [Libpff](https://github.com/libyal/libpff) to support Outlook & Exchange mailboxes
+  * [Libewf](https://github.com/libyal/libewf) to support EnCase forensic containers
+  * [Libvshadow](https://github.com/libyal/libvshadow) to support Volume Shadow Copy
 
 * The following dependencies can be installed after compilation
-  * (http://projects.sentinelchicken.org/reglookup/download/ "pyregfi and reglookup") to support Windows registry parsing
-  * (https://github.com/volatilityfoundation/volatility "volatility") to support volatile memory analyse
-  * (https://github.com/erocarrera/pefile "pefile") to enhance metadata extracted from recovered binary in volatile memory
+  * [Pyregfi and reglookup](http://projects.sentinelchicken.org/reglookup/download/) to support Windows registry parsing
+  * [Volatility](https://github.com/volatilityfoundation/volatility) to support volatile memory analyse
+  * ["Pefile"](https://github.com/erocarrera/pefile) to enhance metadata extracted from recovered binary in volatile memory
 
 
 # Install
