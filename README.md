@@ -117,3 +117,12 @@ cd build
 cmake ..
 make -j`getconf _NPROCESSORS_ONLN`
 </pre>
+
+
+# Pointers
+
+Website: http://www.digital-forensic.org/
+
+IRC: irc.freenode.net #digital-forensic
+
+Twitter: @dfforg
