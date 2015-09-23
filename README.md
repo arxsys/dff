@@ -122,8 +122,8 @@ make -j`getconf _NPROCESSORS_ONLN`
 
 # Pointers
 
-Website: http://www.digital-forensic.org/
+Website: http://www.digital-forensic.org/ | http://www.arxsys.fr
 
-IRC: irc.freenode.net #digital-forensic
+IRC: irc.freenode.net #dff
 
-Twitter: @dfforg
+Twitter: @arxsys
