@@ -23,7 +23,7 @@ from dff.api.manager.manager import ApiManager
 
 from dff.ui.gui.gui import GUI
 from dff.ui.console.console import Console
-from dff.ui.ui import Usage
+from dff.ui.ui import parseArguments
 
 MODULES_PATHS = ["dff/modules"]
 
@@ -33,12 +33,12 @@ def fg():
 
 if __name__ == "__main__":
     """You can place some script command here for testing purpose"""
-    argv = Usage(sys.argv[1:])    
-    if argv.graphical == 0 or argv.batch:
-       ui = console = Console(debug=argv.debug, verbosity=argv.verbosity)
+    arguments = parseArguments()
+    if not arguments.graphical or arguments.batch:
+       ui = console = Console(arguments=arguments)
        console.loadModules(MODULES_PATHS)
-       if argv.batch:
-         console.onecmd("batch " + argv.batch, False)
-    if argv.graphical:
-        ui = gui = GUI(argv.debug, argv.verbosity)
+       if arguments.batch:
+         console.onecmd("batch " + arguments.batch, False)
+    if arguments.graphical:
+        ui = gui = GUI(arguments)
     ui.launch(MODULES_PATHS)
